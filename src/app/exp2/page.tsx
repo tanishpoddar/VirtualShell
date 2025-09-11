@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -13,10 +14,11 @@ import CommandHints from '@/components/command-hints';
 import SrmLogo from '@/components/srm-logo';
 import AuthButton from '@/components/auth-button';
 import Link from 'next/link';
-import { Home as HomeIcon } from 'lucide-react';
+import { Home as HomeIcon, Menu } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 
 const experimentSections = {
   aim: 'Aim',
@@ -203,6 +205,7 @@ export default function Experiment2Page() {
   const [terminalHistory, setTerminalHistory] = useState<Array<{ type: 'command' | 'output'; content: string }>>([]);
   const vfsRef = useRef(vfs);
   const [activeSection, setActiveSection] = useState('aim');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     vfsRef.current = vfs;
@@ -279,8 +282,28 @@ export default function Experiment2Page() {
     setTimeout(() => handleCommand(command), 50);
   }
 
+  const renderNavLinks = (isSheet = false) => (
+    <ul className='space-y-1'>
+      {Object.entries(experimentSections).map(([key, title]) => (
+        <li key={key}>
+           <Button
+              variant={activeSection === key ? 'secondary' : 'ghost'}
+              className="w-full justify-start text-left h-auto py-2 px-3"
+              onClick={() => {
+                setActiveSection(key)
+                if (isSheet) setIsMenuOpen(false);
+              }}
+            >
+            {title}
+            </Button>
+        </li>
+      ))}
+    </ul>
+  );
+
+
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
           <div className="flex items-center gap-4">
@@ -294,29 +317,34 @@ export default function Experiment2Page() {
                 <p className="text-sm text-muted-foreground">Experiment 2: Basic Commands & Filters</p>
             </div>
           </div>
-          <AuthButton />
+          <div className="flex items-center gap-2">
+            <AuthButton />
+            <div className="md:hidden">
+              <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left">
+                    <div className='p-4'>
+                      <h2 className="text-lg font-semibold mb-4">Experiment Sections</h2>
+                      {renderNavLinks(true)}
+                    </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+          </div>
         </div>
       </header>
       <div className="flex-grow grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 container mx-auto p-4 md:p-6">
-          <nav className="md:col-span-1 lg:col-span-1">
+          <nav className="hidden md:block md:col-span-1 lg:col-span-1">
               <Card className="sticky top-20">
                   <CardHeader>
                       <CardTitle className="text-lg">Experiment Sections</CardTitle>
                   </CardHeader>
                   <CardContent className="p-2">
-                      <ul className='space-y-1'>
-                          {Object.entries(experimentSections).map(([key, title]) => (
-                              <li key={key}>
-                                  <Button
-                                  variant={activeSection === key ? 'secondary' : 'ghost'}
-                                  className="w-full justify-start text-left h-auto py-2 px-3"
-                                  onClick={() => setActiveSection(key)}
-                                  >
-                                  {title}
-                                  </Button>
-                              </li>
-                          ))}
-                      </ul>
+                    {renderNavLinks()}
                   </CardContent>
               </Card>
           </nav>

@@ -8,14 +8,13 @@ import { executeCommand } from '@/lib/commands';
 import { VirtualFileSystem, createInitialFileSystem } from '@/lib/filesystem';
 import type { VFS } from '@/lib/types';
 
-import AppHeader from '@/components/layout/header';
-import AppFooter from '@/components/layout/footer';
 import Terminal from '@/components/terminal';
 import CommandHints from '@/components/command-hints';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 const experimentSections = {
   '2a': 'Exp. 2(a) - Basic Linux Commands',
@@ -31,12 +30,14 @@ const experimentSections = {
   filters: 'Filters',
 };
 
+const sectionsWithTerminal = ['basics', 'files', 'directories', 'substitution', 'redirection', 'piping', 'environment', 'permission', 'filters'];
+
 const experimentContent: Record<string, React.ReactNode> = {
   '2a': (
     <div>
-      <h3 className="text-lg font-bold mb-2">Aim:</h3>
+      <h3 className="text-xl font-bold mb-2 font-serif">Aim:</h3>
       <p>To execute basic linux commands</p>
-      <h3 className="text-lg font-bold mt-4 mb-2">Procedure:</h3>
+      <h3 className="text-xl font-bold mt-4 mb-2 font-serif">Procedure:</h3>
     </div>
   ),
   basics: (
@@ -139,9 +140,9 @@ const experimentContent: Record<string, React.ReactNode> = {
   ),
   '2b': (
      <div>
-      <h3 className="text-lg font-bold mb-2">Aim:</h3>
+      <h3 className="text-xl font-bold mb-2 font-serif">Aim:</h3>
       <p>To execute filters and admin commands.</p>
-      <h3 className="text-lg font-bold mt-4 mb-2">Procedure:</h3>
+      <h3 className="text-xl font-bold mt-4 mb-2 font-serif">Procedure:</h3>
     </div>
   ),
   filters: (
@@ -264,20 +265,22 @@ export default function Experiment2() {
     handleCommand(command);
   }
 
+  const showTerminal = sectionsWithTerminal.includes(activeSection);
+
   return (
-    <div className="flex flex-col md:flex-row gap-6 pt-4">
-        <nav className="md:w-1/4 lg:w-1/5">
-            <Card>
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-4">
+        <nav className="md:col-span-1">
+            <Card className="sticky top-20">
                 <CardHeader>
-                    <CardTitle>Experiment 2</CardTitle>
+                    <CardTitle className="text-xl">Experiment 2</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <ul className='space-y-2'>
+                <CardContent className="p-2">
+                    <ul className='space-y-1'>
                         {Object.entries(experimentSections).map(([key, title]) => (
                             <li key={key}>
                                 <Button
                                 variant={activeSection === key ? 'secondary' : 'ghost'}
-                                className="w-full justify-start"
+                                className="w-full justify-start text-left h-auto py-2"
                                 onClick={() => setActiveSection(key)}
                                 >
                                 {title}
@@ -288,36 +291,39 @@ export default function Experiment2() {
                 </CardContent>
             </Card>
         </nav>
-        <main className="flex-grow flex flex-col gap-4 md:w-3/4 lg:w-4/5">
+        <main className="md:col-span-3 flex flex-col gap-6">
             <Card>
                 <CardHeader>
-                    <CardTitle>{experimentSections[activeSection as keyof typeof experimentSections]}</CardTitle>
+                    <CardTitle className="text-2xl font-serif">{experimentSections[activeSection as keyof typeof experimentSections]}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <ScrollArea className="h-48">
-                         {experimentContent[activeSection as keyof typeof experimentContent]}
-                    </ScrollArea>
+                <CardContent className="prose prose-sm max-w-none">
+                    {experimentContent[activeSection as keyof typeof experimentContent]}
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Terminal</CardTitle>
-                </CardHeader>
-                 <CardContent>
-                    {loading ? (
-                        <Skeleton className="w-full h-[400px] rounded-lg" />
-                    ) : (
-                        <Terminal
-                        onCommand={handleCommand}
-                        history={terminalHistory}
-                        cwd={vfs.cwd}
-                        />
-                    )}
-                 </CardContent>
-            </Card>
+            {showTerminal && (
+              <>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Terminal</CardTitle>
+                        <CardDescription>Execute commands here. Your file system is saved automatically.</CardDescription>
+                    </CardHeader>
+                     <CardContent>
+                        {loading ? (
+                            <Skeleton className="w-full h-[400px] rounded-lg" />
+                        ) : (
+                            <Terminal
+                            onCommand={handleCommand}
+                            history={terminalHistory}
+                            cwd={vfs.cwd}
+                            />
+                        )}
+                     </CardContent>
+                </Card>
 
-            <CommandHints onRunHint={handleRunHint} />
+                <CommandHints onRunHint={handleRunHint} />
+              </>
+            )}
         </main>
     </div>
   );

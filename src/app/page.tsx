@@ -6,7 +6,7 @@ import Experiment2 from '@/components/experiments/exp2';
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-secondary/20">
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 max-w-screen-2xl items-center">
           <div className="mr-4 flex items-center">
@@ -24,15 +24,15 @@ export default function Home() {
                 <path d="M45,60h10v10h-10Z" />
               </g>
             </svg>
-            <span className="font-bold hidden sm:inline-block font-serif">
+            <span className="font-bold font-serif text-xl">
               OS Virtual Labs
             </span>
           </div>
         </div>
       </header>
-      <main className="flex-grow container mx-auto p-4">
+      <main className="flex-grow container mx-auto p-4 md:p-8">
         <Tabs defaultValue="exp2" className="w-full">
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-8">
             <TabsTrigger value="exp1">Exp 1</TabsTrigger>
             <TabsTrigger value="exp2">Exp 2</TabsTrigger>
             <TabsTrigger value="exp3">Exp 3</TabsTrigger>
@@ -43,28 +43,42 @@ export default function Home() {
             <TabsTrigger value="exp8">Exp 8</TabsTrigger>
           </TabsList>
           <TabsContent value="exp1">
-            <p className="p-4">Experiment 1 content will be here.</p>
+            <div className="flex items-center justify-center p-10 bg-background rounded-lg shadow-sm mt-4">
+              <p>Experiment 1 content will be here.</p>
+            </div>
           </TabsContent>
           <TabsContent value="exp2">
             <Experiment2 />
           </TabsContent>
           <TabsContent value="exp3">
-            <p className="p-4">Experiment 3 content will be here.</p>
+            <div className="flex items-center justify-center p-10 bg-background rounded-lg shadow-sm mt-4">
+              <p>Experiment 3 content will be here.</p>
+            </div>
           </TabsContent>
           <TabsContent value="exp4">
-            <p className="p-4">Experiment 4 content will be here.</p>
+            <div className="flex items-center justify-center p-10 bg-background rounded-lg shadow-sm mt-4">
+              <p>Experiment 4 content will be here.</p>
+            </div>
           </TabsContent>
           <TabsContent value="exp5">
-            <p className="p-4">Experiment 5 content will be here.</p>
+             <div className="flex items-center justify-center p-10 bg-background rounded-lg shadow-sm mt-4">
+              <p>Experiment 5 content will be here.</p>
+            </div>
           </TabsContent>
           <TabsContent value="exp6">
-            <p className="p-4">Experiment 6 content will be here.</p>
+            <div className="flex items-center justify-center p-10 bg-background rounded-lg shadow-sm mt-4">
+              <p>Experiment 6 content will be here.</p>
+            </div>
           </TabsContent>
           <TabsContent value="exp7">
-            <p className="p-4">Experiment 7 content will be here.</p>
+            <div className="flex items-center justify-center p-10 bg-background rounded-lg shadow-sm mt-4">
+              <p>Experiment 7 content will be here.</p>
+            </div>
           </TabsContent>
           <TabsContent value="exp8">
-            <p className="p-4">Experiment 8 content will be here.</p>
+             <div className="flex items-center justify-center p-10 bg-background rounded-lg shadow-sm mt-4">
+              <p>Experiment 8 content will be here.</p>
+            </div>
           </TabsContent>
         </Tabs>
       </main>

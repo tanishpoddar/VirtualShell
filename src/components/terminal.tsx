@@ -67,19 +67,19 @@ const Terminal: React.FC<TerminalProps> = ({ onCommand, history, cwd }) => {
   
   const Prompt = ({ path }: { path: string}) => (
     <div className="flex font-code">
-      <span className="text-green-400">student@srm</span>
+      <span className="text-green-500">student@srm</span>
       <span className="text-muted-foreground">:</span>
-      <span className="text-blue-400">{path}</span>
+      <span className="text-blue-500">{path}</span>
       <span className="text-muted-foreground">$ &nbsp;</span>
     </div>
   );
 
   return (
     <div
-      className="bg-black text-white font-code w-full h-[400px] md:h-[600px] flex flex-col rounded-lg border-2 border-card overflow-hidden"
+      className="bg-gray-900 text-white font-code w-full h-[400px] md:h-[600px] flex flex-col rounded-lg border-2 border-border overflow-hidden"
       onClick={() => inputRef.current?.focus()}
     >
-      <div ref={scrollRef} className="flex-grow p-4 overflow-y-auto">
+      <div ref={scrollRef} className="flex-grow p-4 overflow-y-auto text-sm">
         {history.map((item, index) => (
           <div key={index}>
             {item.type === 'command' ? (

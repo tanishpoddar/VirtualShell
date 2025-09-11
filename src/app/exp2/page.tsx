@@ -10,14 +10,16 @@ import type { VFS } from '@/lib/types';
 
 import Terminal from '@/components/terminal';
 import CommandHints from '@/components/command-hints';
+import SrmLogo from '@/components/srm-logo';
+import AuthButton from '@/components/auth-button';
+import Link from 'next/link';
+import { Home as HomeIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 
 const experimentSections = {
-  '2a': 'Exp. 2(a) - Basic Linux Commands',
+  aim: 'Aim',
   basics: 'Basics',
   files: 'Working with Files',
   directories: 'Working with Directories',
@@ -26,22 +28,19 @@ const experimentSections = {
   piping: 'Piping',
   environment: 'Environment Variables',
   permission: 'File Permission',
-  '2b': 'Exp. 2(b) - Filters and Admin Commands',
-  filters: 'Filters',
+  filters: 'Filters & Admin',
+  terminal: 'Terminal',
 };
 
-const sectionsWithTerminal = ['basics', 'files', 'directories', 'substitution', 'redirection', 'piping', 'environment', 'permission', 'filters'];
-
 const experimentContent: Record<string, React.ReactNode> = {
-  '2a': (
+  aim: (
     <div>
-      <h3 className="text-xl font-bold mb-2 font-serif">Aim:</h3>
-      <p>To execute basic linux commands</p>
-      <h3 className="text-xl font-bold mt-4 mb-2 font-serif">Procedure:</h3>
+      <h3 className="text-xl font-bold mb-2 font-headline">Aim:</h3>
+      <p>To execute basic linux commands, filters and admin commands.</p>
     </div>
   ),
   basics: (
-    <ul className="space-y-2 list-decimal list-inside">
+     <ul className="space-y-2 list-decimal list-inside">
       <li><code>echo SRM</code> ➔ to display the string SRM</li>
       <li><code>clear</code> ➔ to clear the screen</li>
       <li><code>date</code> ➔ to display the current date and time</li>
@@ -96,7 +95,7 @@ const experimentContent: Record<string, React.ReactNode> = {
         <li><code>ls [a-d,l-m]ring</code> ➔ list files whose first letter is any one of the character from a to d and l to m and followed by the word ring.</li>
      </ul>
   ),
-    redirection: (
+  redirection: (
     <div>
         <h4 className='font-bold'>Input redirection</h4>
         <p><code>wc –l &lt; ex1</code> ➔ To find the number of lines of the file ‘ex1’</p>
@@ -138,13 +137,6 @@ const experimentContent: Record<string, React.ReactNode> = {
         <p>Example: <code>chmod 754 f1</code></p>
      </div>
   ),
-  '2b': (
-     <div>
-      <h3 className="text-xl font-bold mb-2 font-serif">Aim:</h3>
-      <p>To execute filters and admin commands.</p>
-      <h3 className="text-xl font-bold mt-4 mb-2 font-serif">Procedure:</h3>
-    </div>
-  ),
   filters: (
     <ul className="space-y-4">
         <li>
@@ -176,13 +168,13 @@ const experimentContent: Record<string, React.ReactNode> = {
   )
 };
 
-export default function Experiment2() {
+export default function Experiment2Page() {
   const { user, loading: authLoading } = useAuth();
   const [vfs, setVfs] = useState<VirtualFileSystem>(new VirtualFileSystem(createInitialFileSystem()));
   const [loading, setLoading] = useState(true);
   const [terminalHistory, setTerminalHistory] = useState<Array<{ type: 'command' | 'output'; content: string }>>([]);
   const vfsRef = useRef(vfs);
-  const [activeSection, setActiveSection] = useState('2a');
+  const [activeSection, setActiveSection] = useState('aim');
 
   useEffect(() => {
     vfsRef.current = vfs;
@@ -253,64 +245,73 @@ export default function Experiment2() {
     setVfs(updatedVfs);
     await saveVfsState(updatedVfs);
   };
-  
-  const handleReset = async () => {
-    const newVfs = new VirtualFileSystem(createInitialFileSystem());
-    setVfs(newVfs);
-    setTerminalHistory([]);
-    await saveVfsState(newVfs);
-  };
 
   const handleRunHint = (command: string) => {
-    handleCommand(command);
+    setActiveSection('terminal');
+    setTimeout(() => handleCommand(command), 50);
   }
 
-  const showTerminal = sectionsWithTerminal.includes(activeSection);
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-4">
-        <nav className="md:col-span-1">
-            <Card className="sticky top-20">
-                <CardHeader>
-                    <CardTitle className="text-xl">Experiment 2</CardTitle>
-                </CardHeader>
-                <CardContent className="p-2">
-                    <ul className='space-y-1'>
-                        {Object.entries(experimentSections).map(([key, title]) => (
-                            <li key={key}>
-                                <Button
-                                variant={activeSection === key ? 'secondary' : 'ghost'}
-                                className="w-full justify-start text-left h-auto py-2"
-                                onClick={() => setActiveSection(key)}
-                                >
-                                {title}
-                                </Button>
-                            </li>
-                        ))}
-                    </ul>
-                </CardContent>
-            </Card>
-        </nav>
-        <main className="md:col-span-3 flex flex-col gap-6">
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-2xl font-serif">{experimentSections[activeSection as keyof typeof experimentSections]}</CardTitle>
-                </CardHeader>
-                <CardContent className="prose prose-sm max-w-none">
-                    {experimentContent[activeSection as keyof typeof experimentContent]}
-                </CardContent>
-            </Card>
-
-            {showTerminal && (
+    <div className="flex flex-col h-screen">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
+          <div className="flex items-center gap-4">
+             <Link href="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                <HomeIcon className="h-5 w-5" />
+             </Link>
+            <div className="h-6 w-px bg-border" />
+            <SrmLogo className="h-8 w-8" />
+            <div className='hidden md:block'>
+                <h1 className="font-extrabold font-headline text-xl tracking-tight">OS Virtual Labs</h1>
+                <p className="text-sm text-muted-foreground">Experiment 2: Basic Commands & Filters</p>
+            </div>
+          </div>
+          <AuthButton />
+        </div>
+      </header>
+      <div className="flex-grow grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 container mx-auto p-4 md:p-6">
+          <nav className="md:col-span-1 lg:col-span-1">
+              <Card className="sticky top-20">
+                  <CardHeader>
+                      <CardTitle className="text-lg">Experiment Sections</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-2">
+                      <ul className='space-y-1'>
+                          {Object.entries(experimentSections).map(([key, title]) => (
+                              <li key={key}>
+                                  <Button
+                                  variant={activeSection === key ? 'secondary' : 'ghost'}
+                                  className="w-full justify-start text-left h-auto py-2 px-3"
+                                  onClick={() => setActiveSection(key)}
+                                  >
+                                  {title}
+                                  </Button>
+                              </li>
+                          ))}
+                      </ul>
+                  </CardContent>
+              </Card>
+          </nav>
+          <main className="md:col-span-3 lg:col-span-4 flex flex-col gap-6">
+            {activeSection !== 'terminal' ? (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-2xl font-headline">{experimentSections[activeSection as keyof typeof experimentSections]}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="prose prose-blue max-w-none text-base">
+                        {experimentContent[activeSection as keyof typeof experimentContent]}
+                    </CardContent>
+                </Card>
+            ) : (
               <>
                 <Card>
                     <CardHeader>
                         <CardTitle>Terminal</CardTitle>
-                        <CardDescription>Execute commands here. Your file system is saved automatically.</CardDescription>
+                        <CardDescription>Execute commands here. Your file system is saved automatically when logged in.</CardDescription>
                     </CardHeader>
                      <CardContent>
                         {loading ? (
-                            <Skeleton className="w-full h-[400px] rounded-lg" />
+                            <Skeleton className="w-full h-[400px] md:h-[600px] rounded-lg" />
                         ) : (
                             <Terminal
                             onCommand={handleCommand}
@@ -324,7 +325,8 @@ export default function Experiment2() {
                 <CommandHints onRunHint={handleRunHint} />
               </>
             )}
-        </main>
+          </main>
+      </div>
     </div>
   );
 }

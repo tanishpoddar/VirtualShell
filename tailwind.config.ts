@@ -1,4 +1,5 @@
 import type {Config} from 'tailwindcss';
+const { fontFamily } = require("tailwindcss/defaultTheme")
 
 export default {
   darkMode: ['class'],
@@ -8,12 +9,19 @@ export default {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['Nunito Sans', 'sans-serif'],
+        headline: ['Nunito Sans', 'sans-serif'],
         code: ['Source Code Pro', 'monospace'],
-        serif: ['Tinos', 'serif'],
+        sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -101,5 +109,5 @@ export default {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
 } satisfies Config;

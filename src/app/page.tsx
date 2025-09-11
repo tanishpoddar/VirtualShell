@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import SrmLogo from '@/components/srm-logo';
 import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+
 
 const experiments = [
   { id: 1, title: 'Experiment 1', description: 'Shell Programming', href: '#' },
@@ -16,6 +18,29 @@ const experiments = [
   { id: 7, title: 'Experiment 7', description: 'Memory Allocation', href: '#' },
   { id: 8, title: 'Experiment 8', description: 'Disk Scheduling', href: '#' },
 ];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+    },
+  },
+};
+
 
 export default function Home() {
   return (
@@ -31,32 +56,44 @@ export default function Home() {
         </div>
       </header>
       <main className="flex-grow">
-        <section className="container mx-auto px-4 md:px-6 py-12 md:py-20 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-4">
+        <motion.section 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="container mx-auto px-4 md:px-6 py-12 md:py-20 text-center"
+        >
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-4 font-headline">
             Welcome to the Operating Systems Virtual Lab
           </h1>
           <p className="max-w-3xl mx-auto text-muted-foreground text-lg md:text-xl">
             An interactive, web-based platform to learn and master fundamental OS concepts through hands-on experimentation. No setup required.
           </p>
-        </section>
+        </motion.section>
 
-        <section className="container mx-auto px-4 md:px-6 pb-16">
+        <motion.section 
+            className="container mx-auto px-4 md:px-6 pb-16"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {experiments.map((exp) => (
-              <Link href={exp.href} key={exp.id} className={`group ${exp.href === '#' ? 'pointer-events-none' : ''}`}>
-                <Card className={`h-full transition-all duration-300 ease-in-out ${exp.href !== '#' ? 'hover:shadow-lg hover:-translate-y-1 hover:border-primary' : 'opacity-50'}`}>
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span>{exp.title}</span>
-                      <ArrowRight className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${exp.href !== '#' ? 'group-hover:translate-x-1 group-hover:text-primary' : ''}`} />
-                    </CardTitle>
-                    <CardDescription>{exp.description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
+              <motion.div key={exp.id} variants={itemVariants}>
+                <Link href={exp.href} className={`group ${exp.href === '#' ? 'pointer-events-none' : ''}`}>
+                  <Card className={`h-full transition-all duration-300 ease-in-out ${exp.href !== '#' ? 'hover:shadow-primary/20 hover:shadow-lg hover:-translate-y-1 hover:border-primary' : 'opacity-50'}`}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between">
+                        <span>{exp.title}</span>
+                        <ArrowRight className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${exp.href !== '#' ? 'group-hover:translate-x-1 group-hover:text-primary' : ''}`} />
+                      </CardTitle>
+                      <CardDescription>{exp.description}</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              </motion.div>
             ))}
           </div>
-        </section>
+        </motion.section>
       </main>
     </div>
   );

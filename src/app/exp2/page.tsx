@@ -8,6 +8,7 @@ import useAuth from '@/hooks/use-auth';
 import { executeCommand } from '@/lib/commands';
 import { VirtualFileSystem, createInitialFileSystem } from '@/lib/filesystem';
 import type { VFS } from '@/lib/types';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import Terminal from '@/components/terminal';
 import CommandHints from '@/components/command-hints';
@@ -288,7 +289,7 @@ export default function Experiment2Page() {
         <li key={key}>
            <Button
               variant={activeSection === key ? 'secondary' : 'ghost'}
-              className="w-full justify-start text-left h-auto py-2 px-3"
+              className="w-full justify-start text-left h-auto py-2 px-3 transition-colors duration-200"
               onClick={() => {
                 setActiveSection(key)
                 if (isSheet) setIsMenuOpen(false);
@@ -307,7 +308,7 @@ export default function Experiment2Page() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
           <div className="flex items-center gap-4">
-             <Link href="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+             <Link href="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors duration-200">
                 <HomeIcon className="h-5 w-5" />
              </Link>
             <div className="h-6 w-px bg-border" />
@@ -326,7 +327,7 @@ export default function Experiment2Page() {
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left">
+                <SheetContent side="left" className="w-[300px] sm:w-[400px]">
                     <div className='p-4'>
                       <h2 className="text-lg font-semibold mb-4">Experiment Sections</h2>
                       {renderNavLinks(true)}
@@ -339,7 +340,7 @@ export default function Experiment2Page() {
       </header>
       <div className="flex-grow grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 container mx-auto p-4 md:p-6">
           <nav className="hidden md:block md:col-span-1 lg:col-span-1">
-              <Card className="sticky top-20">
+              <Card className="sticky top-20 animate-fade-in-left">
                   <CardHeader>
                       <CardTitle className="text-lg">Experiment Sections</CardTitle>
                   </CardHeader>
@@ -349,42 +350,51 @@ export default function Experiment2Page() {
               </Card>
           </nav>
           <main className="md:col-span-3 lg:col-span-4 flex flex-col gap-6">
-            {activeSection !== 'terminal' ? (
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-2xl font-headline">{experimentSections[activeSection as keyof typeof experimentSections]}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="prose prose-blue max-w-none text-base">
-                        {experimentContent[activeSection as keyof typeof experimentContent]}
-                    </CardContent>
-                </Card>
-            ) : (
-              <>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Terminal</CardTitle>
-                        <CardDescription>Execute commands here. Your file system is saved automatically when logged in.</CardDescription>
-                    </CardHeader>
-                     <CardContent>
-                        {loading ? (
-                            <Skeleton className="w-full h-[400px] md:h-[600px] rounded-lg" />
-                        ) : (
-                            <Terminal
-                            onCommand={handleCommand}
-                            history={terminalHistory}
-                            cwd={vfs.cwd}
-                            />
-                        )}
-                     </CardContent>
-                </Card>
-
-                <CommandHints onRunHint={handleRunHint} />
-              </>
-            )}
+             <AnimatePresence mode="wait">
+                <motion.div
+                    key={activeSection}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    className="flex flex-col gap-6"
+                >
+                    {activeSection !== 'terminal' ? (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-2xl font-headline">{experimentSections[activeSection as keyof typeof experimentSections]}</CardTitle>
+                            </CardHeader>
+                            <CardContent className="prose prose-blue max-w-none text-base">
+                                {experimentContent[activeSection as keyof typeof experimentContent]}
+                            </CardContent>
+                        </Card>
+                    ) : (
+                      <>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Terminal</CardTitle>
+                                <CardDescription>Execute commands here. Your file system is saved automatically when logged in.</CardDescription>
+                            </CardHeader>
+                             <CardContent>
+                                {loading ? (
+                                    <Skeleton className="w-full h-[400px] md:h-[600px] rounded-lg" />
+                                ) : (
+                                    <Terminal
+                                    onCommand={handleCommand}
+                                    history={terminalHistory}
+                                    cwd={vfs.cwd}
+                                    />
+                                )}
+                             </CardContent>
+                        </Card>
+        
+                        <CommandHints onRunHint={handleRunHint} />
+                      </>
+                    )}
+                </motion.div>
+            </AnimatePresence>
           </main>
       </div>
     </div>
   );
 }
-
-    

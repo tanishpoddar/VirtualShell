@@ -17,8 +17,9 @@ export const createInitialFileSystem = (): VFS => {
               type: 'directory',
               name: 'student',
               children: {
-                'f1': { type: 'file', name: 'f1', content: 'This is file f1.', permissions: 0o644, owner: 'student', group: 'student', modified: now },
-                'f2.txt': { type: 'file', name: 'f2.txt', content: 'This is file f2.txt\nIt has two lines.', permissions: 0o644, owner: 'student', group: 'student', modified: now },
+                'f1': { type: 'file', name: 'f1', content: 'This is file f1.\nIt contains sample text.\n', permissions: 0o644, owner: 'student', group: 'student', modified: now },
+                'f2': { type: 'file', name: 'f2', content: 'This is file f2.\nIt has different content.\n', permissions: 0o644, owner: 'student', group: 'student', modified: now },
+                'ex1': { type: 'file', name: 'ex1', content: 'Line 1\nLine 2\nLine 3\nLine 4\nLine 5\n', permissions: 0o644, owner: 'student', group: 'student', modified: now },
               },
               permissions: 0o755, owner: 'student', group: 'student', modified: now,
             },
@@ -51,6 +52,9 @@ export class VirtualFileSystem {
 
   constructor(initialState?: VFS) {
     this.state = initialState || createInitialFileSystem();
+    if (!this.state.cwd) {
+        this.state.cwd = '/home/student';
+    }
     this.previousCwd = this.state.cwd;
   }
 
@@ -62,27 +66,62 @@ export class VirtualFileSystem {
     return JSON.parse(JSON.stringify(this.state));
   }
   
-  private _resolvePath(path: string): string {
+  public resolvePath(path: string, allowDir: boolean = false): string {
     if (path === '-') return this.previousCwd || this.state.cwd;
 
     if (path.startsWith('/')) {
-        return path;
+        // Absolute path
+        const parts = path.split('/').filter(p => p);
+        const resolved: string[] = [];
+        for (const part of parts) {
+            if (part === '.') continue;
+            if (part === '..') {
+                resolved.pop();
+            } else {
+                resolved.push(part);
+            }
+        }
+        return '/' + resolved.join('/');
     }
-    const parts = (this.state.cwd === '/' ? '' : this.state.cwd).split('/').concat(path.split('/'));
+    
+    // Relative path
+    const cwdParts = this.state.cwd.split('/').filter(p => p);
+    const pathParts = path.split('/').filter(p => p);
+    const combined = [...cwdParts, ...pathParts];
     const resolved: string[] = [];
-    for (const part of parts) {
-        if (part === '' || part === '.') continue;
+
+    for (const part of combined) {
+        if (part === '.') continue;
         if (part === '..') {
             resolved.pop();
         } else {
             resolved.push(part);
         }
     }
-    return '/' + resolved.join('/');
+    
+    const finalPath = '/' + resolved.join('/');
+
+    if(allowDir) return finalPath;
+
+    // Check if the resolved path points to a directory when it shouldn't
+    try {
+        const node = this.getNode(finalPath, true);
+        if (node.type === 'directory' && !path.endsWith('/') && path !== '.' && path !== '..') {
+             // If original path was `d` and it's a directory, this is valid.
+             // If original path was `d/f` and `d` is dir, this is valid.
+             const pathSegments = path.split('/').filter(Boolean);
+             if (pathSegments[pathSegments.length-1] === node.name) return finalPath;
+        }
+    } catch(e) {
+        // It's a new file/path, that's okay
+    }
+
+
+    return finalPath;
   }
 
-  public getNode(path: string): VFSNode {
-    const resolvedPath = this._resolvePath(path);
+  public getNode(path: string, suppressError: boolean = false): VFSNode {
+    const resolvedPath = this.resolvePath(path, true);
     if (resolvedPath === '/') return this.state.root;
 
     const parts = resolvedPath.split('/').filter(p => p);
@@ -90,6 +129,7 @@ export class VirtualFileSystem {
 
     for (const part of parts) {
       if (currentNode.type !== 'directory' || !currentNode.children[part]) {
+        if (suppressError) return currentNode; // return last valid node
         throw new Error(`path not found: ${path}`);
       }
       currentNode = currentNode.children[part];
@@ -98,24 +138,25 @@ export class VirtualFileSystem {
   }
   
   public getParentNode(path: string): { parent: VFSDirectory, name: string } {
-      const resolvedPath = this._resolvePath(path);
+      const resolvedPath = this.resolvePath(path);
       const parts = resolvedPath.split('/').filter(p => p);
       if (parts.length === 0) throw new Error(`Cannot get parent of root`);
       const name = parts.pop()!;
       const parentPath = '/' + parts.join('/');
-      const parent = this.getNode(parentPath) as VFSDirectory;
+      const parent = this.getNode(parentPath, true) as VFSDirectory;
       if (parent.type !== 'directory') throw new Error(`Invalid path: ${path}`);
       return { parent, name };
   }
 
   public cd(path: string) {
-    const newPath = this._resolvePath(path);
+    const newPath = this.resolvePath(path, true);
     const node = this.getNode(newPath);
     if (node.type !== 'directory') {
       throw new Error(`cd: not a directory: ${path}`);
     }
     this.previousCwd = this.state.cwd;
-    this.state.cwd = newPath;
+    this.state.cwd = newPath === '/' && newPath.length > 1 ? newPath.slice(0, -1) : newPath;
+    if (this.state.cwd === '') this.state.cwd = '/';
   }
 
   public mkdir(path: string) {
@@ -157,6 +198,7 @@ export class VirtualFileSystem {
         node.modified = new Date().toISOString();
     } catch(e) {
         const { parent, name } = this.getParentNode(path);
+        if (!name) return;
         parent.children[name] = {
             type: 'file',
             name,
@@ -187,6 +229,7 @@ export class VirtualFileSystem {
             group: 'student',
             modified: new Date().toISOString(),
         }
+        parent.modified = new Date().toISOString();
     }
   }
 
@@ -200,12 +243,11 @@ export class VirtualFileSystem {
   
   public rm(path: string) {
     const { parent, name } = this.getParentNode(path);
-    if (!parent.children[name]) {
+    const node = parent.children[name];
+    if (!node) {
         throw new Error(`rm: cannot remove '${name}': No such file or directory`);
     }
-    const node = parent.children[name];
-    // In unix, rm can remove empty directories with -d, but for this sim, we'll just allow file removal.
-    if (node.type === 'directory') {
+    if (node.type === 'directory') { // Simplified rm, doesn't handle -r
         throw new Error(`rm: cannot remove '${name}': Is a directory`);
     }
     delete parent.children[name];
@@ -216,29 +258,77 @@ export class VirtualFileSystem {
     const sourceNode = this.getNode(sourcePath);
     if(sourceNode.type === 'directory') throw new Error(`cp: ${sourcePath} is a directory (not supported)`);
     
-    let finalDestPath = destPath;
+    let finalDestPath = this.resolvePath(destPath, true);
+    let name = sourceNode.name;
+
     try {
       const destNode = this.getNode(destPath);
       if (destNode.type === 'directory') {
-        finalDestPath = this._resolvePath(destPath + '/' + sourceNode.name);
+        name = sourceNode.name;
+        finalDestPath = this.resolvePath(destPath + '/' + name, true);
       }
     } catch (e) {
       // destination doesn't exist, that's fine
+       const { name: destName } = this.getParentNode(destPath);
+       name = destName;
     }
-
-    this.writeFile(finalDestPath, sourceNode.content);
+    
+    const { parent } = this.getParentNode(finalDestPath);
+    const newFile: VFSFile = {
+        ...JSON.parse(JSON.stringify(sourceNode)),
+        name,
+        modified: new Date().toISOString(),
+    };
+    parent.children[name] = newFile;
+    parent.modified = new Date().toISOString();
   }
 
   public mv(sourcePath: string, destPath: string) {
-    this.cp(sourcePath, destPath);
-    this.rm(sourcePath);
+    const { parent: sourceParent, name: sourceName } = this.getParentNode(sourcePath);
+    const sourceNode = this.getNode(sourcePath);
+
+    let destParent = sourceParent;
+    let destName = sourceName;
+    
+    try {
+      let destNode = this.getNode(destPath);
+      if (destNode.type === 'directory') {
+        destParent = destNode as VFSDirectory;
+        destName = sourceName;
+      } else {
+        // Overwriting a file
+        const { parent, name } = this.getParentNode(destPath);
+        destParent = parent;
+        destName = name;
+      }
+    } catch(e) {
+      // Moving to a new path
+      const { parent, name } = this.getParentNode(destPath);
+      destParent = parent;
+      destName = name;
+    }
+
+    // Check if overwriting an existing file in the new location
+    if (destParent.children[destName]) {
+        if (destParent.children[destName].type === 'directory') {
+            throw new Error(`mv: cannot overwrite directory '${destName}' with non-directory`);
+        }
+    }
+    
+    delete sourceParent.children[sourceName];
+    sourceParent.modified = new Date().toISOString();
+    
+    sourceNode.name = destName;
+    sourceNode.modified = new Date().toISOString();
+    destParent.children[destName] = sourceNode;
+    destParent.modified = new Date().toISOString();
   }
   
   public chmod(path: string, mode: string) {
       const node = this.getNode(path);
       // This is a simplified chmod, only supporting octal for now
       const newPerms = parseInt(mode, 8);
-      if(isNaN(newPerms)) throw new Error(`chmod: invalid mode: ‘${mode}’`);
+      if(isNaN(newPerms) || newPerms > 0o777) throw new Error(`chmod: invalid mode: ‘${mode}’`);
       node.permissions = newPerms;
       node.modified = new Date().toISOString();
   }

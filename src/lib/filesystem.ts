@@ -47,9 +47,11 @@ export const createInitialFileSystem = (): VFS => {
 
 export class VirtualFileSystem {
   private state: VFS;
+  private previousCwd: string | null = null;
 
   constructor(initialState?: VFS) {
     this.state = initialState || createInitialFileSystem();
+    this.previousCwd = this.state.cwd;
   }
 
   get cwd() {
@@ -61,6 +63,8 @@ export class VirtualFileSystem {
   }
   
   private _resolvePath(path: string): string {
+    if (path === '-') return this.previousCwd || this.state.cwd;
+
     if (path.startsWith('/')) {
         return path;
     }
@@ -79,6 +83,8 @@ export class VirtualFileSystem {
 
   public getNode(path: string): VFSNode {
     const resolvedPath = this._resolvePath(path);
+    if (resolvedPath === '/') return this.state.root;
+
     const parts = resolvedPath.split('/').filter(p => p);
     let currentNode: VFSNode = this.state.root;
 
@@ -97,17 +103,19 @@ export class VirtualFileSystem {
       if (parts.length === 0) throw new Error(`Cannot get parent of root`);
       const name = parts.pop()!;
       const parentPath = '/' + parts.join('/');
-      const parent = this.getNode(parentPath);
+      const parent = this.getNode(parentPath) as VFSDirectory;
       if (parent.type !== 'directory') throw new Error(`Invalid path: ${path}`);
       return { parent, name };
   }
 
   public cd(path: string) {
-    const node = this.getNode(path);
+    const newPath = this._resolvePath(path);
+    const node = this.getNode(newPath);
     if (node.type !== 'directory') {
       throw new Error(`cd: not a directory: ${path}`);
     }
-    this.state.cwd = this._resolvePath(path);
+    this.previousCwd = this.state.cwd;
+    this.state.cwd = newPath;
   }
 
   public mkdir(path: string) {
@@ -124,6 +132,22 @@ export class VirtualFileSystem {
         group: 'student',
         modified: new Date().toISOString(),
     };
+    parent.modified = new Date().toISOString();
+  }
+
+  public rmdir(path: string) {
+    const { parent, name } = this.getParentNode(path);
+    const node = parent.children[name];
+    if (!node) {
+        throw new Error(`rmdir: failed to remove '${name}': No such file or directory`);
+    }
+    if (node.type !== 'directory') {
+        throw new Error(`rmdir: failed to remove '${name}': Not a directory`);
+    }
+    if (Object.keys(node.children).length > 0) {
+        throw new Error(`rmdir: failed to remove '${name}': Directory not empty`);
+    }
+    delete parent.children[name];
     parent.modified = new Date().toISOString();
   }
 
@@ -180,11 +204,43 @@ export class VirtualFileSystem {
         throw new Error(`rm: cannot remove '${name}': No such file or directory`);
     }
     const node = parent.children[name];
-    if (node.type === 'directory' && Object.keys(node.children).length > 0) {
-        throw new Error(`rm: cannot remove '${name}': Directory not empty`);
+    // In unix, rm can remove empty directories with -d, but for this sim, we'll just allow file removal.
+    if (node.type === 'directory') {
+        throw new Error(`rm: cannot remove '${name}': Is a directory`);
     }
     delete parent.children[name];
     parent.modified = new Date().toISOString();
+  }
+
+  public cp(sourcePath: string, destPath: string) {
+    const sourceNode = this.getNode(sourcePath);
+    if(sourceNode.type === 'directory') throw new Error(`cp: ${sourcePath} is a directory (not supported)`);
+    
+    let finalDestPath = destPath;
+    try {
+      const destNode = this.getNode(destPath);
+      if (destNode.type === 'directory') {
+        finalDestPath = this._resolvePath(destPath + '/' + sourceNode.name);
+      }
+    } catch (e) {
+      // destination doesn't exist, that's fine
+    }
+
+    this.writeFile(finalDestPath, sourceNode.content);
+  }
+
+  public mv(sourcePath: string, destPath: string) {
+    this.cp(sourcePath, destPath);
+    this.rm(sourcePath);
+  }
+  
+  public chmod(path: string, mode: string) {
+      const node = this.getNode(path);
+      // This is a simplified chmod, only supporting octal for now
+      const newPerms = parseInt(mode, 8);
+      if(isNaN(newPerms)) throw new Error(`chmod: invalid mode: ‘${mode}’`);
+      node.permissions = newPerms;
+      node.modified = new Date().toISOString();
   }
 
   public permissionsToString(perms: number): string {
@@ -194,3 +250,5 @@ export class VirtualFileSystem {
     return r + w + x;
   }
 }
+
+    

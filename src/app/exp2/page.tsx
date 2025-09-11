@@ -28,7 +28,8 @@ const experimentSections = {
   piping: 'Piping',
   environment: 'Environment Variables',
   permission: 'File Permission',
-  filters: 'Filters & Admin',
+  filters: 'Filters',
+  admin: 'System Admin',
   terminal: 'Terminal',
 };
 
@@ -165,7 +166,34 @@ const experimentContent: Record<string, React.ReactNode> = {
             <p>Syntax : <code>diff f1 f2</code></p>
         </li>
     </ul>
-  )
+  ),
+  admin: (
+    <div>
+        <h3 className="text-xl font-bold mb-4 font-headline">System Admin Commands</h3>
+        <h4 className="font-bold text-lg mt-4 mb-2">Installing Software</h4>
+         <ul className="space-y-2 list-decimal list-inside">
+            <li>Update the package repositories: <code>sudo apt-get update</code></li>
+            <li>Update installed software: <code>sudo apt-get upgrade</code></li>
+            <li>Install a package/software: <code>sudo apt-get install &lt;package-name&gt;</code></li>
+            <li>Remove a package from the system: <code>sudo apt-get remove &lt;package-name&gt;</code></li>
+            <li>Reinstall a package: <code>sudo apt-get install &lt;package-name&gt; --reinstall</code></li>
+        </ul>
+
+        <h4 className="font-bold text-lg mt-6 mb-2">Managing Users</h4>
+         <ul className="space-y-2 list-decimal list-inside">
+            <li>Add a user: <code>sudo adduser username</code></li>
+            <li>Disable a user: <code>sudo passwd -l username</code></li>
+            <li>Enable a user: <code>sudo passwd -u username</code></li>
+            <li>Delete a user: <code>sudo userdel –r username</code></li>
+            <li>Create a group: <code>sudo addgroup groupname</code></li>
+            <li>Delete a group: <code>sudo delgroup groupname</code></li>
+            <li>Create a user with group: <code>sudo adduser username groupname</code></li>
+            <li>See password expiry: <code>sudo chage -l username</code></li>
+            <li>Make changes to user: <code>sudo chage username</code></li>
+        </ul>
+        <p className='mt-4'>Note: These are simulated commands. In a real system, they would require administrative privileges.</p>
+    </div>
+  ),
 };
 
 export default function Experiment2Page() {
@@ -330,3 +358,5 @@ export default function Experiment2Page() {
     </div>
   );
 }
+
+    

@@ -6,13 +6,17 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { Home as HomeIcon, Menu } from 'lucide-react';
 import SrmLogo from '@/components/srm-logo';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AuthButton from '@/components/auth-button';
+import WebContainerTerminal from '@/components/webcontainer-terminal/WebContainerTerminal';
+import CommandHints from '@/components/command-hints';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const experimentSections = {
   priority: 'Priority Scheduling',
   roundRobin: 'Round Robin Scheduling',
+  terminal: 'Terminal',
 };
 
 const experimentContent: Record<string, React.ReactNode> = {
@@ -64,6 +68,10 @@ export default function Experiment9Page() {
   const [activeSection, setActiveSection] = useState('priority');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const handleRunHint = (command: string) => {
+    setActiveSection('terminal');
+  };
+
   const renderNavLinks = (isSheet = false) => (
     <ul className='space-y-1'>
       {Object.entries(experimentSections).map(([key, title]) => (
@@ -100,6 +108,7 @@ export default function Experiment9Page() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <AuthButton />
             <div className="md:hidden">
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <SheetTrigger asChild>
@@ -139,14 +148,29 @@ export default function Experiment9Page() {
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                     className="flex flex-col gap-6"
                 >
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-2xl font-headline">{experimentSections[activeSection as keyof typeof experimentSections]}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="prose prose-blue max-w-none dark:prose-invert">
-                            {experimentContent[activeSection as keyof typeof experimentContent]}
-                        </CardContent>
-                    </Card>
+                    {activeSection !== 'terminal' ? (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-2xl font-headline">{experimentSections[activeSection as keyof typeof experimentSections]}</CardTitle>
+                            </CardHeader>
+                            <CardContent className="prose prose-blue max-w-none dark:prose-invert">
+                                {experimentContent[activeSection as keyof typeof experimentContent]}
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Terminal</CardTitle>
+                                    <CardDescription>Real Linux terminal powered by WebContainers. Your filesystem is saved automatically when logged in.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="p-4">
+                                    <WebContainerTerminal />
+                                </CardContent>
+                            </Card>
+                            <CommandHints onRunHint={handleRunHint} />
+                        </>
+                    )}
                 </motion.div>
             </AnimatePresence>
           </main>

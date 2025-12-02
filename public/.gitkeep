@@ -1,0 +1,25 @@
+# SEO Images Needed
+
+Please add the following images to the /public directory:
+
+1. **og-image.png** (1200x630px)
+   - Open Graph image for social media sharing
+   - Should show the app interface or logo
+
+2. **icon-192.png** (192x192px)
+   - PWA icon for mobile devices
+
+3. **icon-512.png** (512x512px)
+   - PWA icon for high-resolution displays
+
+4. **apple-icon.png** (180x180px)
+   - Apple touch icon for iOS devices
+
+5. **favicon.ico** (32x32px)
+   - Browser favicon
+
+## Design Guidelines
+- Use SRMIST branding colors (blue, purple)
+- Include "OS Virtual Shell" text
+- Keep it clean and professional
+- Ensure good contrast for readability

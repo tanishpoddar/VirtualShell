@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { onAuthStateChanged, getRedirectResult, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase-config';
 
 interface AuthState {
@@ -14,12 +14,32 @@ const useAuth = (): AuthState => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+    
+    // Check for redirect result on mount
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result && mounted) {
+          // Successfully signed in after redirect
+        }
+      })
+      .catch((error) => {
+        if (mounted && process.env.NODE_ENV === 'development') {
+          console.error('Redirect error:', error);
+        }
+      });
+    
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
+      if (mounted) {
+        setUser(user);
+        setLoading(false);
+      }
     });
 
-    return () => unsubscribe();
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
   }, []);
 
   return { user, loading };

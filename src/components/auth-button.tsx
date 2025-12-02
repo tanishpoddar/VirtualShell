@@ -1,27 +1,53 @@
 'use client';
 
-import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithRedirect, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase-config';
 import useAuth from '@/hooks/use-auth';
+import { rateLimit } from '@/lib/security';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { LogIn, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 
-export default function AuthButton() {
+const GoogleLogo = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.64 9.20454C17.64 8.56636 17.5827 7.95272 17.4764 7.36363H9V10.845H13.8436C13.635 11.97 13.0009 12.9231 12.0477 13.5613V15.8195H14.9564C16.6582 14.2527 17.64 11.9454 17.64 9.20454Z" fill="#4285F4"/>
+    <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5613C11.2418 14.1013 10.2109 14.4204 9 14.4204C6.65591 14.4204 4.67182 12.8372 3.96409 10.71H0.957275V13.0418C2.43818 15.9831 5.48182 18 9 18Z" fill="#34A853"/>
+    <path d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29V4.95818H0.957275C0.347727 6.17318 0 7.54772 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z" fill="#FBBC05"/>
+    <path d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z" fill="#EA4335"/>
+  </svg>
+);
+
+function AuthButton() {
   const { user, loading } = useAuth();
 
   const handleSignIn = async () => {
+    // Rate limiting: max 5 attempts per minute
+    const clientId = 'auth-attempt';
+    if (!rateLimit.check(clientId, 5, 60000)) {
+      alert('Too many sign-in attempts. Please wait a minute and try again.');
+      return;
+    }
+
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    });
+    
     try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error('Error during sign-in:', error);
+      await signInWithRedirect(auth, provider);
+    } catch (error: any) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error during sign-in:', error);
+      }
+      // User-friendly error message
+      alert('Unable to sign in. Please try again.');
     }
   };
 
@@ -29,29 +55,52 @@ export default function AuthButton() {
     try {
       await signOut(auth);
     } catch (error) {
-      console.error('Error during sign-out:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error during sign-out:', error);
+      }
+      alert('Unable to sign out. Please try again.');
     }
   };
 
   if (loading) {
-    return <Button variant="outline" size="sm" disabled>Authenticating...</Button>;
+    return (
+      <Button 
+        variant="outline" 
+        size="sm" 
+        disabled
+        className="border-2 h-8 sm:h-9 px-2 sm:px-3"
+      >
+        <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-primary mr-1 sm:mr-2"></div>
+        <span className="text-xs sm:text-sm">Loading...</span>
+      </Button>
+    );
   }
 
   if (user) {
+    // Get first name from display name
+    const firstName = user.displayName?.split(' ')[0] || 'User';
+    
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
-              <AvatarFallback>{user.displayName?.charAt(0) || 'U'}</AvatarFallback>
-            </Avatar>
+          <Button 
+            variant="outline"
+            className="h-8 sm:h-9 px-3 sm:px-4 border-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all font-medium"
+          >
+            <span className="text-xs sm:text-sm">{firstName}</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end" forceMount>
-          <DropdownMenuItem onClick={handleSignOut}>
+        <DropdownMenuContent className="w-56 sm:w-64" align="end" forceMount>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-semibold">{user.displayName || 'User'}</p>
+              <p className="text-xs text-muted-foreground">{user.email}</p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50">
             <LogOut className="mr-2 h-4 w-4" />
-            <span>Log out</span>
+            <span>Sign out</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -59,8 +108,16 @@ export default function AuthButton() {
   }
 
   return (
-    <Button variant="default" onClick={handleSignIn}>
-      <LogIn className="mr-2 h-4 w-4" /> Sign in with Google
+    <Button 
+      onClick={handleSignIn}
+      className="bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 hover:border-gray-400 shadow-sm hover:shadow-md transition-all duration-200 font-medium h-8 sm:h-9 px-2 sm:px-3 text-xs sm:text-sm"
+      size="sm"
+    >
+      <GoogleLogo />
+      <span className="ml-1.5 sm:ml-2 hidden xs:inline">Sign in</span>
+      <span className="ml-1.5 sm:ml-2 xs:hidden">Sign in</span>
     </Button>
   );
 }
+
+export default AuthButton;

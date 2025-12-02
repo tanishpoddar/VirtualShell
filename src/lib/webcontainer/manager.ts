@@ -51,10 +51,21 @@ export class WebContainerManager {
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        this.container = await WebContainer.boot({
-          workdirName: config?.workdir || 'home',
-          coep: config?.coep || 'credentialless',
-        });
+        // Check if a WebContainer instance already exists globally
+        if (typeof window !== 'undefined' && (window as any).__webcontainer__) {
+          this.container = (window as any).__webcontainer__;
+          console.log('Reusing existing WebContainer instance');
+        } else {
+          this.container = await WebContainer.boot({
+            workdirName: config?.workdir || 'home',
+            coep: config?.coep || 'credentialless',
+          });
+          
+          // Store the instance globally to prevent multiple boots
+          if (typeof window !== 'undefined') {
+            (window as any).__webcontainer__ = this.container;
+          }
+        }
 
         await this.setupDefaultEnvironment();
 
@@ -65,6 +76,17 @@ export class WebContainerManager {
       } catch (err) {
         lastError = err as Error;
         console.error(`WebContainer initialization attempt ${attempt} failed:`, err);
+
+        // If error is about multiple instances, try to reuse existing one
+        if (lastError?.message?.includes('single WebContainer instance')) {
+          if (typeof window !== 'undefined' && (window as any).__webcontainer__) {
+            this.container = (window as any).__webcontainer__;
+            this.status = 'ready';
+            this.error = null;
+            this.initPromise = null;
+            return;
+          }
+        }
 
         if (attempt < maxRetries) {
           await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
@@ -113,20 +135,29 @@ export class WebContainerManager {
     const startTime = Date.now();
 
     try {
-      const process = await this.container.spawn('sh', ['-c', command]);
+      const process = await this.container.spawn('jsh', ['-c', command]);
 
       let stdout = '';
       let stderr = '';
 
-      process.output.pipeTo(
-        new WritableStream({
-          write: (data) => {
-            stdout += data;
-            this.notifyOutput(data);
-          },
-        })
-      );
+      // Capture stdout
+      const stdoutReader = process.output.getReader();
 
+      // Read stdout
+      const readStdout = async () => {
+        try {
+          while (true) {
+            const { done, value } = await stdoutReader.read();
+            if (done) break;
+            stdout += value;
+          }
+        } catch (err) {
+          console.error('Error reading stdout:', err);
+        }
+      };
+
+      // Wait for stream and exit code
+      await readStdout();
       const exitCode = await process.exit;
       const duration = Date.now() - startTime;
 
@@ -258,6 +289,41 @@ export class WebContainerManager {
     this.error = null;
     this.outputCallbacks = [];
     this.errorCallbacks = [];
+  }
+
+  async spawnShell(): Promise<any> {
+    if (!this.container || this.status !== 'ready') {
+      throw this.createError(
+        'WebContainer not ready',
+        ErrorCodes.COMMAND_FAILED,
+        false,
+        'Terminal is not ready. Please wait for initialization to complete.'
+      );
+    }
+
+    try {
+      console.log('[Manager] Spawning shell process');
+      const shellProcess = await this.container.spawn('jsh');
+      
+      // Track shell exit for cleanup
+      shellProcess.exit.then(() => {
+        console.log('[Manager] Shell exited');
+      });
+      
+      return shellProcess;
+    } catch (err) {
+      const error = err as Error;
+      throw this.createError(
+        error.message,
+        ErrorCodes.COMMAND_FAILED,
+        true,
+        `Failed to spawn shell: ${error.message}`
+      );
+    }
+  }
+
+  getContainer(): WebContainer | null {
+    return this.container;
   }
 
   getStatus(): WebContainerStatus {

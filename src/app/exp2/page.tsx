@@ -97,8 +97,8 @@ const experimentContent: Record<string, React.ReactNode> = {
         <h4 className='font-bold'>Input redirection</h4>
         <p><code>wc –l &lt; ex1</code> ➔ To find the number of lines of the file ‘ex1’</p>
         <h4 className='font-bold mt-2'>Output redirection</h4>
-        <p><code>who > f2</code> ➔ the output of ‘who’ will be redirected to file f2</p>
-        <p><code>cat >> f1</code> ➔ to append more into the file f1</p>
+        <p><code>who {'>'}  f2</code> ➔ the output of ‘who’ will be redirected to file f2</p>
+        <p><code>cat {'>'}{'>'}  f1</code> ➔ to append more into the file f1</p>
     </div>
   ),
   piping: (
@@ -294,7 +294,7 @@ export default function Experiment2Page() {
                                 <CardTitle>Terminal</CardTitle>
                                 <CardDescription>Real Linux terminal powered by WebContainers. Your filesystem is saved automatically when logged in.</CardDescription>
                             </CardHeader>
-                             <CardContent>
+                             <CardContent className="p-4">
                                 <WebContainerTerminal />
                              </CardContent>
                         </Card>

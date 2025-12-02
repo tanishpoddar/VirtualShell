@@ -20,10 +20,20 @@ export function useWebContainer(): UseWebContainerReturn {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
+    let errorUnsubscribe: (() => void) | undefined;
+
     const initializeContainer = async () => {
       try {
         const manager = WebContainerManager.getInstance();
         managerRef.current = manager;
+
+        // Check if already initialized
+        const currentStatus = manager.getStatus();
+        if (currentStatus === 'ready') {
+          setStatus('ready');
+          setIsInitialized(true);
+          return;
+        }
 
         // Subscribe to status changes
         const checkStatus = () => {
@@ -31,18 +41,15 @@ export function useWebContainer(): UseWebContainerReturn {
           setError(manager.getError());
         };
 
-        const errorUnsubscribe = manager.onError((err) => {
+        errorUnsubscribe = manager.onError((err) => {
           setError(err);
           setStatus('error');
         });
 
+        setStatus('loading');
         await manager.initialize();
         checkStatus();
         setIsInitialized(true);
-
-        return () => {
-          errorUnsubscribe();
-        };
       } catch (err) {
         setError(err as Error);
         setStatus('error');
@@ -52,9 +59,8 @@ export function useWebContainer(): UseWebContainerReturn {
     initializeContainer();
 
     return () => {
-      // Cleanup on unmount
-      if (managerRef.current) {
-        managerRef.current.destroy();
+      if (errorUnsubscribe) {
+        errorUnsubscribe();
       }
     };
   }, []);

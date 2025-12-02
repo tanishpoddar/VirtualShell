@@ -19,7 +19,7 @@ import { Home as HomeIcon, Menu } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const experimentSections = {
   aim: 'Aim',
@@ -31,8 +31,8 @@ const experimentSections = {
   piping: 'Piping',
   environment: 'Environment Variables',
   permission: 'File Permission',
-  filters: 'Filters',
-  admin: 'System Admin',
+  filters: 'Filters (2b)',
+  admin: 'System Admin (2b)',
   terminal: 'Terminal',
 };
 
@@ -44,136 +44,182 @@ const experimentContent: Record<string, React.ReactNode> = {
     </div>
   ),
   basics: (
-     <ul className="space-y-2 list-decimal list-inside">
-      <li><code>echo SRM</code> ➔ to display the string SRM</li>
-      <li><code>clear</code> ➔ to clear the screen</li>
-      <li><code>date</code> ➔ to display the current date and time</li>
-      <li><code>cal 2003</code> ➔ to display the calendar for the year 2003</li>
-      <li><code>cal 6 2003</code> ➔ to display the calendar for the June-2003</li>
-      <li><code>passwd</code> ➔ to change password</li>
-    </ul>
+     <div className="prose-headings:font-headline">
+      <h3 className="text-xl font-bold">Exp. No.:2(a) BASIC LINUX COMMANDS</h3>
+      <h4 className="font-bold">a) Basics</h4>
+      <ul className="space-y-2 list-decimal list-inside">
+        <li><code>echo SRM</code> ➔ to display the string SRM</li>
+        <li><code>clear</code> ➔ to clear the screen</li>
+        <li><code>date</code> ➔ to display the current date and time</li>
+        <li><code>cal 2003</code> ➔ to display the calendar for the year 2003</li>
+        <li><code>cal 6 2003</code> ➔ to display the calendar for the June-2003</li>
+        <li><code>passwd</code> ➔ to change password</li>
+      </ul>
+    </div>
   ),
   files: (
-    <ul className="space-y-2 list-decimal list-inside">
-      <li>
-        <code>ls</code> ➔ list files in the present working directory
-        <ul className="list-disc list-inside ml-4">
-          <li><code>ls –l</code> ➔ list files with detailed information (long list)</li>
-          <li><code>ls –a</code> ➔ list all files including the hidden files</li>
-        </ul>
-      </li>
-      <li><code>cat > f1</code> ➔ to create a file (Press ^d to finish typing)</li>
-      <li><code>cat f1</code> ➔ display the content of the file f1</li>
-      <li>
-        <code>wc f1</code> ➔ list no. of characters, words & lines of a file f1
-        <ul className="list-disc list-inside ml-4">
-          <li><code>wc –c f1</code> ➔ list only no. of characters of file f1</li>
-          <li><code>wc –w f1</code> ➔ list only no. of words of file f1</li>
-          <li><code>wc –l f1</code> ➔ list only no. of lines of file f1</li>
-        </ul>
-      </li>
-      <li><code>cp f1 f2</code> ➔ copy file f1 into f2</li>
-      <li><code>mv f1 f2</code> ➔ rename file f1 as f2</li>
-      <li><code>rm f1</code> ➔ remove the file f1</li>
-      <li><code>head –5 f1</code> ➔ list first 5 lines of the file f1</li>
-      <li><code>tail –5 f1</code> ➔ list last 5 lines of the file f1</li>
-    </ul>
+    <div className="prose-headings:font-headline">
+      <h4 className="font-bold">b) Working with Files</h4>
+      <ul className="space-y-2 list-decimal list-inside">
+        <li>
+          <code>ls</code> ➔ list files in the present working directory
+          <ul className="list-disc list-inside ml-4">
+            <li><code>ls –l</code> ➔ list files with detailed information (long list)</li>
+            <li><code>ls –a</code> ➔ list all files including the hidden files</li>
+          </ul>
+        </li>
+        <li><code>cat > f1</code> ➔ to create a file (Press ^d to finish typing)</li>
+        <li><code>cat f1</code> ➔ display the content of the file f1</li>
+        <li>
+          <code>wc f1</code> ➔ list no. of characters, words & lines of a file f1
+          <ul className="list-disc list-inside ml-4">
+            <li><code>wc –c f1</code> ➔ list only no. of characters of file f1</li>
+            <li><code>wc –w f1</code> ➔ list only no. of words of file f1</li>
+            <li><code>wc –l f1</code> ➔ list only no. of lines of file f1</li>
+          </ul>
+        </li>
+        <li><code>cp f1 f2</code> ➔ copy file f1 into f2</li>
+        <li><code>mv f1 f2</code> ➔ rename file f1 as f2</li>
+        <li><code>rm f1</code> ➔ remove the file f1</li>
+        <li><code>head –5 f1</code> ➔ list first 5 lines of the file f1</li>
+        <li><code>tail –5 f1</code> ➔ list last 5 lines of the file f1</li>
+      </ul>
+    </div>
   ),
   directories: (
-    <ul className="space-y-2 list-decimal list-inside">
-        <li><code>mkdir elias</code> ➔ to create the directory elias</li>
-        <li><code>cd elias</code> ➔ to change the directory as elias</li>
-        <li><code>rmdir elias</code> ➔ to remove the directory elias</li>
-        <li><code>pwd</code> ➔ to display the path of the present working directory</li>
-        <li><code>cd</code> ➔ to go to the home directory</li>
-        <li><code>cd ..</code> ➔ to go to the parent directory</li>
-        <li><code>cd -</code> ➔ to go to the previous working directory</li>
-        <li><code>cd /</code> ➔ to go to the root directory</li>
-    </ul>
+    <div className="prose-headings:font-headline">
+      <h4 className="font-bold">c) Working with Directories</h4>
+      <ul className="space-y-2 list-decimal list-inside">
+          <li><code>mkdir elias</code> ➔ to create the directory elias</li>
+          <li><code>cd elias</code> ➔ to change the directory as elias</li>
+          <li><code>rmdir elias</code> ➔ to remove the directory elias</li>
+          <li><code>pwd</code> ➔ to display the path of the present working directory</li>
+          <li><code>cd</code> ➔ to go to the home directory</li>
+          <li><code>cd ..</code> ➔ to go to the parent directory</li>
+          <li><code>cd -</code> ➔ to go to the previous working directory</li>
+          <li><code>cd /</code> ➔ to go to the root directory</li>
+      </ul>
+    </div>
   ),
   substitution: (
-     <ul className="space-y-2 list-decimal list-inside">
-        <li><code>ls f?</code> ➔ list files start with ‘f’ and followed by any one character</li>
-        <li><code>ls *.c</code> ➔ list files with extension ‘c’</li>
-        <li><code>ls [gpy]et</code> ➔ list files whose first letter is any one of the character g, p or y and followed by the word et</li>
-        <li><code>ls [a-d,l-m]ring</code> ➔ list files whose first letter is any one of the character from a to d and l to m and followed by the word ring.</li>
-     </ul>
+    <div className="prose-headings:font-headline">
+      <h4 className="font-bold">d) File name substitution</h4>
+      <ul className="space-y-2 list-decimal list-inside">
+          <li><code>ls f?</code> ➔ list files start with ‘f’ and followed by any one character</li>
+          <li><code>ls *.c</code> ➔ list files with extension ‘c’</li>
+          <li><code>ls [gpy]et</code> ➔ list files whose first letter is any one of the character g, p or y and followed by the word et</li>
+          <li><code>ls [a-d,l-m]ring</code> ➔ list files whose first letter is any one of the character from a to d and l to m and followed by the word ring.</li>
+      </ul>
+    </div>
   ),
   redirection: (
-    <div>
-        <h4 className='font-bold'>Input redirection</h4>
+    <div className="prose-headings:font-headline">
+        <h4 className="font-bold">e) I/O Redirection</h4>
+        <h5 className='font-bold'>Input redirection</h5>
         <p><code>wc –l &lt; ex1</code> ➔ To find the number of lines of the file ‘ex1’</p>
-        <h4 className='font-bold mt-2'>Output redirection</h4>
+        <h5 className='font-bold mt-2'>Output redirection</h5>
         <p><code>who > f2</code> ➔ the output of ‘who’ will be redirected to file f2</p>
         <p><code>cat >> f1</code> ➔ to append more into the file f1</p>
     </div>
   ),
   piping: (
-    <div>
+    <div className="prose-headings:font-headline">
+        <h4 className="font-bold">f) Piping</h4>
         <p>Syntax : <code>Command1 | command2</code></p>
         <p>Output of the command1 is transferred to the command2 as input. Finally output of the command2 will be displayed on the monitor.</p>
-        <h4 className='font-bold mt-2'>Example.</h4>
+        <h5 className='font-bold mt-2'>Example.</h5>
         <p><code>cat f1 | more</code> list the contents of file f1 screen by screen</p>
         <p><code>head –6 f1 |tail –2</code> prints the 5th & 6th lines of the file f1.</p>
     </div>
   ),
   environment: (
-    <ul className="space-y-2 list-decimal list-inside">
-        <li><code>echo $HOME</code> ➔ display the path of the home directory</li>
-        <li><code>echo $PS1</code> ➔ display the prompt string $</li>
-        <li><code>echo $PS2</code> ➔ display the second prompt string ( > symbol by default )</li>
-        <li><code>echo $LOGNAME</code> ➔ login name</li>
-        <li><code>echo $PATH</code> ➔ list of pathname where the OS searches for an executable file</li>
-    </ul>
+    <div className="prose-headings:font-headline">
+      <h4 className="font-bold">g) Environment variables</h4>
+      <ul className="space-y-2 list-decimal list-inside">
+          <li><code>echo $HOME</code> ➔ display the path of the home directory</li>
+          <li><code>echo $PS1</code> ➔ display the prompt string $</li>
+          <li><code>echo $PS2</code> ➔ display the second prompt string ( > symbol by default )</li>
+          <li><code>echo $LOGNAME</code> ➔ login name</li>
+          <li><code>echo $PATH</code> ➔ list of pathname where the OS searches for an executable file</li>
+      </ul>
+    </div>
   ),
   permission: (
-     <div>
+     <div className="prose-headings:font-headline">
+        <h4 className="font-bold">h) File Permission</h4>
         <p><code>chmod</code> command is used to change the access permission of a file.</p>
-        <h4 className='font-bold mt-2'>Method-1:</h4>
+        <h5 className='font-bold mt-2'>Method-1:</h5>
         <p>Syntax : <code>chmod ugoa+/-rwx filename</code></p>
         <p>u : user, g : group, o : others, + : Add permission - : Remove the permission r : read, w : write, x :execute, a : all permissions</p>
         <p>Example: <code>chmod ug+rw f1</code></p>
         <p>Adding ‘read & write’ permissions of file f1 to both user and group members.</p>
-        <h4 className='font-bold mt-2'>Method-2</h4>
+        <h5 className='font-bold mt-2'>Method-2</h5>
         <p>Syntax : <code>chmod octnum file1</code></p>
         <p>The 3 digit octal number represents as follows: First digit -- file permissions for the user, Second digit -- file permissions for the group, Third digit -- file permissions for others</p>
         <p>Each digit is specified as the sum of following: 4 – read permission, 2 – write permission, 1 – execute permission</p>
         <p>Example: <code>chmod 754 f1</code></p>
+        <p>It changes the file permission for the file as follows: read, write & execute permissions for the user ie; 4+2+1 = 7, read, & execute permissions for the group members ie; 4+0+1 = 5, only read permission for others ie; 4+0+0 = 4</p>
      </div>
   ),
   filters: (
-    <ul className="space-y-4">
-        <li>
-            <h4 className="font-bold">1. cut</h4>
-            <p>Used to cut characters or fileds from a file/input</p>
-            <p>Syntax : <code>cut -cchars filename</code> or <code>-ffieldnos filename</code></p>
-        </li>
-        <li>
-            <h4 className="font-bold">2. grep</h4>
-            <p>Used to search one or more files for a particular pattern.</p>
-            <p>Syntax : <code>grep pattern filename(s)</code></p>
-        </li>
-        <li>
-            <h4 className="font-bold">3. sort</h4>
-            <p>Used to sort the file in order</p>
-            <p>Syntax : <code>sort filename</code></p>
-        </li>
-         <li>
-            <h4 className="font-bold">4. uniq</h4>
-            <p>Displays unique lines of a sorted file</p>
-            <p>Syntax : <code>uniq filename</code></p>
-        </li>
-         <li>
-            <h4 className="font-bold">5. diff</h4>
-            <p>Used to differentiate two files</p>
-            <p>Syntax : <code>diff f1 f2</code></p>
-        </li>
-    </ul>
+    <div className="prose-headings:font-headline">
+        <h3 className="text-xl font-bold">Exp. No.:2(b) FILTERS and ADMIN COMMANDS</h3>
+        <h4 className="font-bold">A. FILTERS</h4>
+        <ul className="space-y-4">
+            <li>
+                <h5 className="font-bold">1. cut</h5>
+                <p>Used to cut characters or fileds from a file/input</p>
+                <p>Syntax :</p>
+                <p><code>cut -cchars filename</code></p>
+                <p><code>-ffieldnos filename</code></p>
+                 <p>Example:<br/>
+                <code>cut –c 5 file.txt</code><br/>
+                <code>cut –c 5-10 file.txt</code><br/>
+                <code>cut –c 5,7,9 file.txt</code><br/>
+                By default, tab is the filed separator(delimiter). If the fileds of the files are separated by any other character, we need to specify explicitly by –d option<br/>
+                <code>cut -ddelimitchar -ffileds filename</code></p>
+            </li>
+            <li>
+                <h5 className="font-bold">2. grep</h5>
+                <p>Used to search one or more files for a particular pattern.</p>
+                <p>Syntax : <code>grep pattern filename(s)</code></p>
+                <p>Lines that contain the pattern in the file(s) get displayed. Pattern can be any regular expressions. More than one files can be searched for a pattern</p>
+                <p><code>-v</code> option displays the lines that do not contain the pattern</p>
+                <p><code>-l</code> list only name of the files that contain the pattern</p>
+                <p><code>-n</code> displays also the line number along with the lines that matches the pattern</p>
+            </li>
+            <li>
+                <h5 className="font-bold">3. sort</h5>
+                <p>Used to sort the file in order</p>
+                <p>Syntax : <code>sort filename</code></p>
+                 <p>Sorts the data as text by default. Sorts by the first filed by default.</p>
+                <p><code>-r</code> option sorts the file in descending order</p>
+                <p><code>-u</code> eliminates duplicate lines</p>
+                <p><code>-o filename</code> writes sorted data into the file fname</p>
+                <p><code>-tdchar</code> sorts the file in which fileds are separated by dchar</p>
+                <p><code>-n</code> sorts the data as number</p>
+                <p><code>+1n</code> skip first filed and sort the file by second filed numerically</p>
+            </li>
+            <li>
+                <h5 className="font-bold">4. uniq</h5>
+                <p>Displays unique lines of a sorted file</p>
+                <p>Syntax : <code>uniq filename</code></p>
+                <p><code>-d</code> option displays only the duplicate lines</p>
+                <p><code>-c</code> displays unique lines with no. of occurrences.</p>
+            </li>
+            <li>
+                <h5 className="font-bold">5. diff</h5>
+                <p>Used to differentiate two files</p>
+                <p>Syntax : <code>diff f1 f2</code></p>
+                <p>compare two files f1 & f2 and prints all the lines that are differed between f1 & f2.</p>
+            </li>
+        </ul>
+    </div>
   ),
   admin: (
-    <div>
-        <h3 className="text-xl font-bold mb-4 font-headline">System Admin Commands</h3>
-        <h4 className="font-bold text-lg mt-4 mb-2">Installing Software</h4>
+    <div className="prose-headings:font-headline">
+        <h4 className="font-bold text-lg mt-4 mb-2">B. SYSTEM ADMIN COMMANDS</h4>
+        <h5 className="font-bold">INSTALLING SOFTWARE</h5>
          <ul className="space-y-2 list-decimal list-inside">
             <li>Update the package repositories: <code>sudo apt-get update</code></li>
             <li>Update installed software: <code>sudo apt-get upgrade</code></li>
@@ -182,8 +228,14 @@ const experimentContent: Record<string, React.ReactNode> = {
             <li>Reinstall a package: <code>sudo apt-get install &lt;package-name&gt; --reinstall</code></li>
         </ul>
 
-        <h4 className="font-bold text-lg mt-6 mb-2">Managing Users</h4>
-         <ul className="space-y-2 list-decimal list-inside">
+        <h5 className="font-bold mt-6 mb-2">MANAGING USERS</h5>
+        <ul className="list-disc list-inside space-y-2">
+            <li>Managing users is a critical aspect of server management.</li>
+            <li>In Ubuntu, the root user is disabled for safety.</li>
+            <li>Root access can be completed by using the sudo command by a user who is in the “admin” group.</li>
+            <li>When you create a user during installation, that user is added automatically to the admin group.</li>
+        </ul>
+         <ul className="space-y-2 list-decimal list-inside mt-4">
             <li>Add a user: <code>sudo adduser username</code></li>
             <li>Disable a user: <code>sudo passwd -l username</code></li>
             <li>Enable a user: <code>sudo passwd -u username</code></li>
@@ -191,8 +243,9 @@ const experimentContent: Record<string, React.ReactNode> = {
             <li>Create a group: <code>sudo addgroup groupname</code></li>
             <li>Delete a group: <code>sudo delgroup groupname</code></li>
             <li>Create a user with group: <code>sudo adduser username groupname</code></li>
-            <li>See password expiry: <code>sudo chage -l username</code></li>
-            <li>Make changes to user: <code>sudo chage username</code></li>
+            <li>See the password expiry value for a user: <code>sudo chage -l username</code></li>
+            <li>Make changes: <code>sudo chage username</code></li>
+            <li>GUI Tool for user management: If you do not want to run the commands in terminal to manage users and groups, then you can install a GUI add-on .<br/><code>sudo apt install gnome-system-tools</code><br/>Once done, type<br/><code>users-admin</code></li>
         </ul>
         <p className='mt-4'>Note: These are simulated commands. In a real system, they would require administrative privileges.</p>
     </div>
@@ -364,7 +417,7 @@ export default function Experiment2Page() {
                             <CardHeader>
                                 <CardTitle className="text-2xl font-headline">{experimentSections[activeSection as keyof typeof experimentSections]}</CardTitle>
                             </CardHeader>
-                            <CardContent className="prose prose-blue max-w-none text-base">
+                            <CardContent className="prose prose-blue max-w-none dark:prose-invert">
                                 {experimentContent[activeSection as keyof typeof experimentContent]}
                             </CardContent>
                         </Card>

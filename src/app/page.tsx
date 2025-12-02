@@ -9,14 +9,14 @@ import { motion } from 'framer-motion';
 
 
 const experiments = [
-  { id: 1, title: 'Experiment 1', description: 'Shell Programming', href: '#' },
+  { id: 1, title: 'Experiment 1', description: 'Shell Programming', href: '/exp1' },
   { id: 2, title: 'Experiment 2', description: 'Basic Linux Commands & Filters', href: '/exp2' },
-  { id: 3, title: 'Experiment 3', description: 'CPU Scheduling Algorithms', href: '#' },
-  { id: 4, title: 'Experiment 4', description: 'Deadlock Avoidance', href: '#' },
-  { id: 5, title: 'Experiment 5', description: 'Deadlock Detection', href: '#' },
-  { id: 6, title: 'Experiment 6', description: 'Page Replacement Algorithms', href: '#' },
-  { id: 7, title: 'Experiment 7', description: 'Memory Allocation', href: '#' },
-  { id: 8, title: 'Experiment 8', description: 'Disk Scheduling', href: '#' },
+  { id: 3, title: 'Experiment 3', description: 'Shell Programs', href: '/exp3' },
+  { id: 4, title: 'Experiment 4', description: 'Process Creation', href: '/exp4' },
+  { id: 5, title: 'Experiment 5', description: 'Multi-Threading', href: '/exp5' },
+  { id: 6, title: 'Experiment 6', description: 'Mutual Exclusion', href: '/exp6' },
+  { id: 7, title: 'Experiment 7', description: 'Dining Philosophers Problem', href: '/exp7' },
+  { id: 8, title: 'Experiment 8', description: 'CPU Scheduling', href: '/exp8' },
 ];
 
 const containerVariants = {

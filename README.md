@@ -11,11 +11,8 @@
 [![Firebase](https://img.shields.io/badge/Firebase-Auth-orange?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
 [![WebContainers](https://img.shields.io/badge/WebContainers-Powered-green?style=for-the-badge)](https://webcontainers.io/)
 
-[🚀 Live Demo](#) • [📚 Documentation](#documentation) • [🎓 Experiments](#experiments)
-
 </div>
 
----
 
 ## ✨ Overview
 
@@ -29,8 +26,6 @@
 - **💾 Auto-Save** - Your work is automatically saved across sessions
 - **🎨 Modern UI** - Beautiful, responsive interface with smooth animations
 - **🌐 Accessible Anywhere** - Learn from any device, anywhere
-
----
 
 ## 🎓 Experiments
 
@@ -78,8 +73,6 @@ Master Operating Systems through **15 comprehensive hands-on experiments**:
 </tr>
 </table>
 
----
-
 ## 🌟 Key Features
 
 <table>
@@ -125,78 +118,6 @@ Learn by doing with real-time feedback and command hints
 </tr>
 </table>
 
----
-
-## 🛠️ Technology Stack
-
-<div align="center">
-
-| Category | Technologies |
-|----------|-------------|
-| **Frontend** | Next.js 15, React 18, TypeScript, Tailwind CSS |
-| **Terminal** | WebContainers, XTerm.js |
-| **Authentication** | Firebase Auth (Google OAuth) |
-| **UI Components** | shadcn/ui, Radix UI, Framer Motion |
-| **AI Assistant** | Google Gemini 2.5 Flash |
-| **Styling** | Tailwind CSS, CSS Modules |
-
-</div>
-
----
-
-## 🎨 Screenshots
-
-<div align="center">
-
-### 🏠 Homepage
-*Beautiful landing page with experiment cards and smooth animations*
-
-### 💻 Terminal Interface
-*Real Linux terminal with retro hacker aesthetic (black background, neon green text)*
-
-### 📖 Experiment Pages
-*Structured learning with theory, examples, and interactive terminal*
-
-</div>
-
----
-
-## 🚀 Performance
-
-<div align="center">
-
-| Metric | Score |
-|--------|-------|
-| **Lighthouse Performance** | 95+ |
-| **First Contentful Paint** | < 1.5s |
-| **Time to Interactive** | < 2.5s |
-| **Core Web Vitals** | All Green ✅ |
-
-</div>
-
----
-
-## 🔐 Security Features
-
-- ✅ **Environment Variable Protection** - All secrets secured
-- ✅ **Rate Limiting** - Prevents abuse (5 attempts/minute)
-- ✅ **Input Sanitization** - XSS protection
-- ✅ **Security Headers** - HSTS, CSP, X-Frame-Options
-- ✅ **OAuth 2.0** - Secure Google authentication
-- ✅ **No Data Storage** - Privacy-first approach
-
----
-
-## 📱 Progressive Web App
-
-Install SRMIST OS Virtual Shell as a mobile app:
-
-- 📲 **Installable** - Add to home screen
-- 🔄 **Offline Ready** - Works without internet (coming soon)
-- 🔔 **Push Notifications** - Stay updated (optional)
-- ⚡ **Fast Loading** - Optimized for mobile networks
-
----
 
 ## 🎯 Learning Outcomes
 
@@ -210,47 +131,6 @@ By completing all experiments, students will master:
 - ✅ Disk scheduling and file system operations
 - ✅ Multi-threading and concurrent programming
 
----
-
-## 🌐 Browser Support
-
-<div align="center">
-
-| Browser | Version | Support |
-|---------|---------|---------|
-| Chrome | 90+ | ✅ Full |
-| Firefox | 88+ | ✅ Full |
-| Safari | 14+ | ✅ Full |
-| Edge | 90+ | ✅ Full |
-
-</div>
-
----
-
-## 📚 Documentation
-
-Comprehensive documentation available:
-
-- 📖 **[SEO Guide](SEO.md)** - Complete SEO implementation
-- 🔒 **[Security Guide](SECURITY.md)** - Security best practices
-- 🚀 **[Deployment Checklist](DEPLOYMENT-CHECKLIST.md)** - Production deployment
-- ⚡ **[Quick Reference](SEO-QUICK-REFERENCE.md)** - Quick SEO reference
-
----
-
-## 🏫 About SRMIST
-
-<div align="center">
-
-**SRM Institute of Science and Technology**
-
-*School of Computing*
-
-Empowering the next generation of developers through innovative education technology.
-
-</div>
-
----
 
 ## 🤝 Contributing
 
@@ -261,34 +141,6 @@ We welcome contributions from the community! Whether it's:
 - 📝 Documentation improvements
 - 🎨 UI/UX enhancements
 
----
-
-## 📄 License
-
-This project is licensed under the **MIT License**.
-
----
-
-## 🙏 Acknowledgments
-
-- **WebContainers** - For making browser-based Linux possible
-- **Next.js Team** - For the amazing React framework
-- **Firebase** - For seamless authentication
-- **shadcn/ui** - For beautiful UI components
-- **SRMIST Faculty** - For guidance and support
-
----
-
-## 📞 Support
-
-Need help? We're here for you:
-
-- 📧 **Email**: support@srmist.edu.in
-- 💬 **Issues**: [GitHub Issues](#)
-- 📚 **Docs**: [Documentation](#documentation)
-
----
-
 <div align="center">
 
 ### ⭐ Star this project if you find it helpful!
@@ -297,8 +149,6 @@ Need help? We're here for you:
 
 *Empowering students to master Operating Systems through interactive learning*
 
+All Rights Reserved.
 ---
-
-© 2024 SRM Institute of Science and Technology. All Rights Reserved.
-
 </div>

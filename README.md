@@ -149,6 +149,6 @@ We welcome contributions from the community! Whether it's:
 
 *Empowering students to master Operating Systems through interactive learning*
 
-All Rights Reserved.
+All Rights Reserved
 ---
 </div>

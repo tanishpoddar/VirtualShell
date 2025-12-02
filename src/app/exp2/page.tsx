@@ -1,22 +1,15 @@
 
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase-config';
-import useAuth from '@/hooks/use-auth';
-import { executeCommand } from '@/lib/commands';
-import { VirtualFileSystem, createInitialFileSystem } from '@/lib/filesystem';
-import type { VFS } from '@/lib/types';
+import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import Terminal from '@/components/terminal';
+import WebContainerTerminal from '@/components/webcontainer-terminal/WebContainerTerminal';
 import CommandHints from '@/components/command-hints';
 import SrmLogo from '@/components/srm-logo';
 import AuthButton from '@/components/auth-button';
 import Link from 'next/link';
 import { Home as HomeIcon, Menu } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
@@ -62,7 +55,7 @@ const experimentContent: Record<string, React.ReactNode> = {
           <li><code>ls –a</code> ➔ list all files including the hidden files</li>
         </ul>
       </li>
-      <li><code>cat > f1</code> ➔ to create a file (Press ^d to finish typing)</li>
+      <li><code>cat {'>'}  f1</code> ➔ to create a file (Press ^d to finish typing)</li>
       <li><code>cat f1</code> ➔ display the content of the file f1</li>
       <li>
         <code>wc f1</code> ➔ list no. of characters, words & lines of a file f1
@@ -121,7 +114,7 @@ const experimentContent: Record<string, React.ReactNode> = {
     <ul className="space-y-2 list-decimal list-inside">
         <li><code>echo $HOME</code> ➔ display the path of the home directory</li>
         <li><code>echo $PS1</code> ➔ display the prompt string $</li>
-        <li><code>echo $PS2</code> ➔ display the second prompt string ( > symbol by default )</li>
+        <li><code>echo $PS2</code> ➔ display the second prompt string ( {'>'} symbol by default )</li>
         <li><code>echo $LOGNAME</code> ➔ login name</li>
         <li><code>echo $PATH</code> ➔ list of pathname where the OS searches for an executable file</li>
     </ul>
@@ -200,87 +193,13 @@ const experimentContent: Record<string, React.ReactNode> = {
 };
 
 export default function Experiment2Page() {
-  const { user, loading: authLoading } = useAuth();
-  const [vfs, setVfs] = useState<VirtualFileSystem>(new VirtualFileSystem(createInitialFileSystem()));
-  const [loading, setLoading] = useState(true);
-  const [terminalHistory, setTerminalHistory] = useState<Array<{ type: 'command' | 'output'; content: string }>>([]);
-  const vfsRef = useRef(vfs);
   const [activeSection, setActiveSection] = useState('aim');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  useEffect(() => {
-    vfsRef.current = vfs;
-  }, [vfs]);
-
-  const saveVfsState = useCallback(async (newVfs: VirtualFileSystem) => {
-    if (user) {
-      try {
-        const docRef = doc(db, 'labs', user.uid);
-        await setDoc(docRef, newVfs.serialize());
-      } catch (error) {
-        console.error('Error saving lab state:', error);
-      }
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (authLoading) {
-      setLoading(true);
-      return;
-    }
-
-    if (user) {
-      setLoading(true);
-      const docRef = doc(db, 'labs', user.uid);
-
-      const unsubscribe = onSnapshot(docRef, (docSnap) => {
-        if (docSnap.exists()) {
-          const data = docSnap.data() as VFS;
-          const newVfs = new VirtualFileSystem(data);
-          if (JSON.stringify(newVfs.serialize()) !== JSON.stringify(vfsRef.current.serialize())) {
-            setVfs(newVfs);
-          }
-        } else {
-          const newVfs = new VirtualFileSystem(createInitialFileSystem());
-          setVfs(newVfs);
-          saveVfsState(newVfs);
-        }
-        setLoading(false);
-      }, (error) => {
-        console.error("Error listening to VFS changes:", error);
-        setVfs(new VirtualFileSystem(createInitialFileSystem()));
-        setLoading(false);
-      });
-      
-      return () => unsubscribe();
-    } else {
-      setVfs(new VirtualFileSystem(createInitialFileSystem()));
-      setTerminalHistory([]);
-      setLoading(false);
-    }
-  }, [user, authLoading, saveVfsState]);
-
-  const handleCommand = async (command: string) => {
-    const newHistory = [...terminalHistory, { type: 'command' as const, content: command }];
-    setTerminalHistory(newHistory);
-
-    if (command.trim().toLowerCase() === 'clear') {
-      setTerminalHistory([]);
-      return;
-    }
-    
-    const { stdout, stderr, vfs: updatedVfs } = await executeCommand(command, vfs);
-    const output = stdout + (stderr ? `\n${stderr}` : '');
-
-    setTerminalHistory(prev => [...prev, { type: 'output', content: output }]);
-
-    setVfs(updatedVfs);
-    await saveVfsState(updatedVfs);
-  };
-
   const handleRunHint = (command: string) => {
     setActiveSection('terminal');
-    setTimeout(() => handleCommand(command), 50);
+    // Command will be executed by the WebContainerTerminal component
+    // We can add a mechanism to pass commands if needed
   }
 
   const renderNavLinks = (isSheet = false) => (
@@ -373,18 +292,10 @@ export default function Experiment2Page() {
                         <Card>
                             <CardHeader>
                                 <CardTitle>Terminal</CardTitle>
-                                <CardDescription>Execute commands here. Your file system is saved automatically when logged in.</CardDescription>
+                                <CardDescription>Real Linux terminal powered by WebContainers. Your filesystem is saved automatically when logged in.</CardDescription>
                             </CardHeader>
                              <CardContent>
-                                {loading ? (
-                                    <Skeleton className="w-full h-[400px] md:h-[600px] rounded-lg" />
-                                ) : (
-                                    <Terminal
-                                    onCommand={handleCommand}
-                                    history={terminalHistory}
-                                    cwd={vfs.cwd}
-                                    />
-                                )}
+                                <WebContainerTerminal />
                              </CardContent>
                         </Card>
         

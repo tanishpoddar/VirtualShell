@@ -12,25 +12,29 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const experimentSections = {
   aim: 'Aim',
-  procedure: 'Procedure',
+  description: 'Description',
 };
 
 const experimentContent: Record<string, React.ReactNode> = {
   aim: (
     <div>
       <h3 className="text-xl font-bold mb-2 font-headline">Aim:</h3>
-      <p>To understand and write shell programs.</p>
+      <p>To Write a C program to simulate disk scheduling algorithms a) FCFS b) SCAN c) C-SCAN</p>
     </div>
   ),
-  procedure: (
+  description: (
     <div>
-      <h3 className="text-xl font-bold mb-2 font-headline">Procedure:</h3>
-      <p>Content for Shell Programming will be added here soon. Please check back later.</p>
+      <p>One of the responsibilities of the operating system is to use the hardware efficiently. For the disk drives, meeting this responsibility entails having fast access time and large disk bandwidth. Both the access time and the bandwidth can be improved by managing the order in which disk I/O requests are serviced which is called as disk scheduling.</p>
+      <ul className="list-disc list-inside space-y-2 mt-4">
+        <li><b>FCFS:</b> The simplest form of disk scheduling is, of course, the first-come, first-served (FCFS) algorithm. This algorithm is intrinsically fair, but it generally does not provide the fastest service.</li>
+        <li><b>SCAN:</b> In the SCAN algorithm, the disk arm starts at one end, and moves towards the other end, servicing requests as it reaches each cylinder, until it gets to the other end of the disk. At the other end, the direction of head movement is reversed, and servicing continues. The head continuously scans back and forth across the disk.</li>
+        <li><b>C-SCAN:</b> C-SCAN is a variant of SCAN designed to provide a more uniform wait time. Like SCAN, C-SCAN moves the head from one end of the disk to the other, servicing requests along the way. When the head reaches the other end, however, it immediately returns to the beginning of the disk without servicing any requests on the return trip</li>
+      </ul>
     </div>
   ),
 };
 
-export default function Experiment1Page() {
+export default function Experiment13Page() {
   const [activeSection, setActiveSection] = useState('aim');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -66,7 +70,7 @@ export default function Experiment1Page() {
             <SrmLogo className="h-8 w-8" />
             <div className='hidden md:block'>
                 <h1 className="font-extrabold font-headline text-xl tracking-tight">OS Virtual Labs</h1>
-                <p className="text-sm text-muted-foreground">Experiment 1: Shell Programming</p>
+                <p className="text-sm text-muted-foreground">Experiment 13: Disk Scheduling</p>
             </div>
           </div>
           <div className="flex items-center gap-2">

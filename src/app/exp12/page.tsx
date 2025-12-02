@@ -12,25 +12,29 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const experimentSections = {
   aim: 'Aim',
-  procedure: 'Procedure',
+  description: 'Description',
 };
 
 const experimentContent: Record<string, React.ReactNode> = {
   aim: (
     <div>
       <h3 className="text-xl font-bold mb-2 font-headline">Aim:</h3>
-      <p>To understand and write shell programs.</p>
+      <p>To implement different page replacement technique. a) FIFO b) LRU c) LFU</p>
     </div>
   ),
-  procedure: (
+  description: (
     <div>
-      <h3 className="text-xl font-bold mb-2 font-headline">Procedure:</h3>
-      <p>Content for Shell Programming will be added here soon. Please check back later.</p>
+      <p>Page replacement algorithms are an important part of virtual memory management and it helps the OS to decide which memory page can be moved out making space for the currently needed page. However, the ultimate objective of all page replacement algorithms is to reduce the number of page faults.</p>
+      <ul className="list-disc list-inside space-y-2 mt-4">
+        <li><b>FIFO:</b> This is the simplest page replacement algorithm. In this algorithm, the operating system keeps track of all pages in the memory in a queue, the oldest page is in the front of the queue. When a page needs to be replaced page in the front of the queue is selected for removal.</li>
+        <li><b>LRU:</b> The LRU stands for the Least Recently Used. It keeps track of page usage in the memory over a short period of time. It works on the concept that pages that have been highly used in the past are likely to be significantly used again in the future. It removes the page that has not been utilized in the memory for the longest time. LRU is the most widely used algorithm because it provides fewer page faults than the other methods.</li>
+        <li><b>LFU:</b> The LFU page replacement algorithm stands for the Least Frequently Used. In the LFU page replacement algorithm, the page with the least visits in a given period of time is removed. It replaces the least frequently used pages. If the frequency of pages remains constant, the page that comes first is replaced first.</li>
+      </ul>
     </div>
   ),
 };
 
-export default function Experiment1Page() {
+export default function Experiment12Page() {
   const [activeSection, setActiveSection] = useState('aim');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -66,7 +70,7 @@ export default function Experiment1Page() {
             <SrmLogo className="h-8 w-8" />
             <div className='hidden md:block'>
                 <h1 className="font-extrabold font-headline text-xl tracking-tight">OS Virtual Labs</h1>
-                <p className="text-sm text-muted-foreground">Experiment 1: Shell Programming</p>
+                <p className="text-sm text-muted-foreground">Experiment 12: Page Replacement Algorithms</p>
             </div>
           </div>
           <div className="flex items-center gap-2">

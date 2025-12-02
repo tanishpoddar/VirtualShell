@@ -11,27 +11,81 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const experimentSections = {
-  aim: 'Aim',
-  procedure: 'Procedure',
+  sequential: 'Sequential File Allocation',
+  indexed: 'Indexed File Allocation',
 };
 
 const experimentContent: Record<string, React.ReactNode> = {
-  aim: (
+  sequential: (
     <div>
-      <h3 className="text-xl font-bold mb-2 font-headline">Aim:</h3>
-      <p>To understand and write shell programs.</p>
+      <h4 className="font-bold">A) SEQUENTIAL:</h4>
+      <p className="font-bold mt-2">AIM:</p>
+      <p>To write a C program for implementing sequential file allocation method</p>
+      <p className="font-bold mt-2">DESCRIPTION:</p>
+      <p>The most common form of file structure is the sequential file in this type of file, a fixed format is used for records. All records (of the system) have the same length, consisting of the same number of fixed length fields in a particular order because the length and position of each field are known, only the values of fields need to be stored, the field name and length for each field are attributes of the file structure.</p>
+      <p className="font-bold mt-2">ALGORITHM:</p>
+      <ol className="list-decimal list-inside space-y-1">
+        <li>Start the program.</li>
+        <li>Get the number of files.</li>
+        <li>Get the memory requirement of each file.</li>
+        <li>Allocate the required locations to each in sequential order a). Randomly select a location from available location s1= random(100);
+            <pre className="bg-muted p-2 rounded-md my-2 text-sm"><code>{`if(b[s1].flag==0)
+{
+  for(j=s1;j<s1+p[i];j++)
+  {
+    if((b[j].flag)==0)count++;
+  }
+  if(count==p[i]) break;
+}`}</code></pre>
+        </li>
+        <li>Allocate and set flag=1 to the allocated locations.
+            <pre className="bg-muted p-2 rounded-md my-2 text-sm"><code>{`for(s=s1;s<(s1+p[i]);s++)
+{
+  k[i][j]=s; j=j+1;
+  b[s].bno=s;
+  b[s].flag=1;
+}`}</code></pre>
+        </li>
+        <li>Print the results file no, length, Blocks allocated.</li>
+        <li>Stop the program</li>
+      </ol>
     </div>
   ),
-  procedure: (
+  indexed: (
     <div>
-      <h3 className="text-xl font-bold mb-2 font-headline">Procedure:</h3>
-      <p>Content for Shell Programming will be added here soon. Please check back later.</p>
+      <h4 className="font-bold">B) INDEXED:</h4>
+      <p className="font-bold mt-2">AIM:</p>
+      <p>To implement allocation method using chained method</p>
+      <p className="font-bold mt-2">DESCRIPTION:</p>
+      <p>In the chained method file allocation table contains a field which points to starting block of memory. From it for each bloc a pointer is kept to next successive block. Hence, there is no external fragmentation.</p>
+      <p className="font-bold mt-2">ALGORITHM:</p>
+      <ol className="list-decimal list-inside space-y-1">
+        <li>Start the program.</li>
+        <li>Get the number of files.</li>
+        <li>Get the memory requirement of each file.</li>
+        <li>Allocate the required locations by selecting a location randomly q= random(100);
+            <ul className="list-alpha list-inside ml-4">
+              <li>Check whether the selected location is free .</li>
+              <li>If the location is free allocate and set flag=1 to the allocated locations.
+                <pre className="bg-muted p-2 rounded-md my-2 text-sm"><code>{`q=random(100);
+if(b[q].flag==0)
+{
+  b[q].flag=1;
+  b[q].fno=j;
+  r[i][j]=q;
+}`}</code></pre>
+              </li>
+            </ul>
+        </li>
+        <li>Print the results file no, length ,Blocks allocated.</li>
+        <li>Stop the program</li>
+      </ol>
     </div>
   ),
 };
 
-export default function Experiment1Page() {
-  const [activeSection, setActiveSection] = useState('aim');
+export default function Experiment14Page() {
+  const [activeSection, setActiveSection] = useState('sequential');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const renderNavLinks = (isSheet = false) => (
@@ -66,7 +120,7 @@ export default function Experiment1Page() {
             <SrmLogo className="h-8 w-8" />
             <div className='hidden md:block'>
                 <h1 className="font-extrabold font-headline text-xl tracking-tight">OS Virtual Labs</h1>
-                <p className="text-sm text-muted-foreground">Experiment 1: Shell Programming</p>
+                <p className="text-sm text-muted-foreground">Experiment 14: File Allocation</p>
             </div>
           </div>
           <div className="flex items-center gap-2">

@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -17,6 +18,13 @@ const experiments = [
   { id: 6, title: 'Experiment 6', description: 'Mutual Exclusion', href: '/exp6' },
   { id: 7, title: 'Experiment 7', description: 'Dining Philosophers Problem', href: '/exp7' },
   { id: 8, title: 'Experiment 8', description: 'CPU Scheduling', href: '/exp8' },
+  { id: 9, title: 'Experiment 9', description: 'Priority & Round Robin Scheduling', href: '/exp9' },
+  { id: 10, title: 'Experiment 10', description: 'Banker\'s Algorithm', href: '/exp10' },
+  { id: 11, title: 'Experiment 11', description: 'Memory Allocation', href: '/exp11' },
+  { id: 12, title: 'Experiment 12', description: 'Page Replacement Algorithms', href: '/exp12' },
+  { id: 13, title: 'Experiment 13', description: 'Disk Scheduling', href: '/exp13' },
+  { id: 14, title: 'Experiment 14', description: 'File Allocation', href: '/exp14' },
+  { id: 15, title: 'Experiment 15', description: 'File Organization', href: '/exp15' },
 ];
 
 const containerVariants = {
@@ -24,7 +32,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.05,
     },
   },
 };

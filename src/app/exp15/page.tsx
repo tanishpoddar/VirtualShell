@@ -12,25 +12,57 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const experimentSections = {
   aim: 'Aim',
+  description: 'Description',
   procedure: 'Procedure',
 };
 
 const experimentContent: Record<string, React.ReactNode> = {
   aim: (
     <div>
-      <h3 className="text-xl font-bold mb-2 font-headline">Aim:</h3>
-      <p>To understand and write shell programs.</p>
+        <h3 className="text-xl font-bold mb-2 font-headline">Aim:</h3>
+        <ol className="list-decimal list-inside space-y-1">
+            <li>To study and simulate single-level directory organization.</li>
+            <li>To study and simulate two-level (user-wise) directory organization.</li>
+        </ol>
+    </div>
+  ),
+  description: (
+    <div>
+        <ul className="list-disc list-inside space-y-2">
+            <li><b>Single-Level Directory:</b> All files exist in one common directory. Simple to implement but leads to name conflicts and poor scalability as the number of files grows.</li>
+            <li><b>Two-Level Directory:</b> Each user gets their own directory (UFD). A master file directory (MFD) maps user names → user directories. Reduces name conflicts (same filename allowed under different users) and improves organization.</li>
+        </ul>
     </div>
   ),
   procedure: (
     <div>
-      <h3 className="text-xl font-bold mb-2 font-headline">Procedure:</h3>
-      <p>Content for Shell Programming will be added here soon. Please check back later.</p>
+        <h4 className="font-bold">Procedure:</h4>
+        <ol className="list-decimal list-inside space-y-2 mt-2">
+            <li>Write C programs that simulate:
+                <ul className="list-disc list-inside ml-4">
+                    <li>Creating, deleting, searching, and listing files (single-level).</li>
+                    <li>Creating users and then creating, deleting, searching, and listing files under each user (two-level).</li>
+                </ul>
+            </li>
+            <li>Compile and run each program.
+                <p>Linux/Mac: <code>gcc single_level.c -o single_level && ./single_level</code></p>
+                <p><code>gcc two_level.c -o two_level && ./two_level</code></p>
+            </li>
+            <li>Exercise the menu:
+                <ul className="list-disc list-inside ml-4">
+                    <li>Create files (and duplicate names) to observe behavior.</li>
+                    <li>Delete files and confirm by listing.</li>
+                    <li>Search for files that exist and that don’t exist.</li>
+                    <li>In two-level, create multiple users and create the same filename under different users to see how two-level avoids conflicts.</li>
+                </ul>
+            </li>
+            <li>Record observations and answer viva questions.</li>
+        </ol>
     </div>
   ),
 };
 
-export default function Experiment1Page() {
+export default function Experiment15Page() {
   const [activeSection, setActiveSection] = useState('aim');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -66,7 +98,7 @@ export default function Experiment1Page() {
             <SrmLogo className="h-8 w-8" />
             <div className='hidden md:block'>
                 <h1 className="font-extrabold font-headline text-xl tracking-tight">OS Virtual Labs</h1>
-                <p className="text-sm text-muted-foreground">Experiment 1: Shell Programming</p>
+                <p className="text-sm text-muted-foreground">Experiment 15: File Organization</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
